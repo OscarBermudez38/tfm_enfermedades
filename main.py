@@ -14,14 +14,17 @@ translator = Translator()
 def cargar_modelo():
     global model, mlb, X, df_treatments
     try:
-        model = tf.keras.models.load_model("/models/disease_nn_model.h5")
-        mlb = joblib.load("/datasets/label_binarizer.pkl")
-        df_symptoms = pd.read_csv("/datasets/Diseases_Symptoms_Processed.csv")
-        df_treatments = pd.read_csv("/datasets/Diseases_Treatments_Processed.csv")
+        # Rutas relativas a los archivos
+        model = tf.keras.models.load_model("models/disease_nn_model.h5")  # Ruta relativa al modelo
+        mlb = joblib.load("datasets/label_binarizer.pkl")  # Ruta relativa al binarizador
+        df_symptoms = pd.read_csv("datasets/Diseases_Symptoms_Processed.csv")  # Ruta relativa al dataset de síntomas
+        df_treatments = pd.read_csv("datasets/Diseases_Treatments_Processed.csv")  # Ruta relativa al dataset de tratamientos
         
+        # Excluir columnas irrelevantes
         columnas_excluir = ["code", "name", "treatments"]
         columnas_presentes = [col for col in columnas_excluir if col in df_symptoms.columns]
         
+        # Crear X (dataset de síntomas)
         X = df_symptoms.drop(columns=columnas_presentes)
         X.columns = [col.lower() for col in X.columns]
         
@@ -29,7 +32,7 @@ def cargar_modelo():
     except Exception as e:
         st.markdown(f"⚠️ Error al cargar el modelo o los datos: {e}")
         raise e
-
+    
     # Verificación de las columnas de X
     st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
 def traducir_texto(texto, src="es", dest="en"):

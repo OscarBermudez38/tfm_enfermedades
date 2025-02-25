@@ -5,7 +5,7 @@ import joblib
 import pandas as pd
 import difflib
 from googletrans import Translator
-import asyncio
+from deep_translator import GoogleTranslator
 
 # Traductor global
 translator = Translator()

@@ -5,6 +5,7 @@ import joblib
 import pandas as pd
 import difflib
 from googletrans import Translator
+import asyncio
 
 # Traductor global
 translator = Translator()
@@ -27,25 +28,23 @@ def cargar_modelo():
     # Verificación de las columnas de X
     st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
 
-# Función para traducir texto de español a inglés (sincrónica)
-def traducir_texto(texto, src="es", dest="en"):
-    """Traduce el texto siempre de español a inglés de manera síncrona."""
+async def traducir_texto(texto, src="es", dest="en"):
+    """Traduce el texto siempre de español a inglés de manera asíncrona."""
     try:
-        # Traducción síncrona
-        translated = translator.translate(texto, src=src, dest=dest)
+        # Traducción asíncrona
+        translated = await translator.translate(texto, src=src, dest=dest)
         st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
         st.markdown(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
-
-# Función para traducir los síntomas (ahora sin asyncio)
-def traducir_sintomas(symptoms):
+# Función para traducir los síntomas (asíncrona)
+async def traducir_sintomas(symptoms):
     translated_symptoms = []
     for symptom in symptoms:
-        # Llamamos a la función para traducir cada síntoma sin usar async
-        translated_symptom = traducir_texto(symptom)  # Llamada sincrónica
+        # Llamamos a la función para traducir cada síntoma usando await
+        translated_symptom = await traducir_texto(symptom)  # Llamada asíncrona
         translated_symptoms.append(translated_symptom)
     
     return translated_symptoms

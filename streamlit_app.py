@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 import joblib
 import pandas as pd
-import difflibç
+import difflib
 import main 
 
 # Cargar el modelo y los datos solo si no están en la sesión

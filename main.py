@@ -29,13 +29,13 @@ def cargar_modelo():
 
 def traducir_texto(texto, src="es", dest="en"):
     """Traduce el texto siempre de español a inglés."""
-    print(f"⚡ Sintoma a traducir: {texto}")  # Agregar depuración aquí
+    st.markdown(f"⚡ Sintoma a traducir: {texto}")  # Agregar depuración aquí
     try:
         translated = translator.translate(texto, src=src, dest=dest).text
-        print(f"📝 Traducido '{texto}' -> '{translated}'")
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated}'")
         return translated
     except Exception as e:
-        print(f"⚠️ Error al traducir: {e}")
+        st.markdown(f"⚠️ Error al traducir: {e}")
         return texto
 
 

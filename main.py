@@ -27,28 +27,28 @@ def cargar_modelo():
 
     # Verificación de las columnas de X
     st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
-
-async def traducir_texto(texto, src="es", dest="en"):
-    """Traduce el texto siempre de español a inglés de manera asíncrona."""
+def traducir_texto(texto, src="es", dest="en"):
+    """Traduce el texto siempre de español a inglés de manera síncrona."""
     try:
-        # Traducción asíncrona
-        translated = await translator.translate(texto, src=src, dest=dest)
+        # Traducción síncrona
+        translated = translator.translate(texto, src=src, dest=dest)
         st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
         st.markdown(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
-# Función para traducir los síntomas (asíncrona)
-async def traducir_sintomas(symptoms):
+# Función para traducir los síntomas (sincrónica)
+def traducir_sintomas(symptoms):
+    """Traduce una lista de síntomas de español a inglés."""
     translated_symptoms = []
     for symptom in symptoms:
-        # Llamamos a la función para traducir cada síntoma usando await
-        translated_symptom = await traducir_texto(symptom)  # Llamada asíncrona
-        translated_symptoms.append(translated_symptom)
+        # Llamamos a la función para traducir cada síntoma
+        translated_symptom = traducir_texto(symptom)  # Llamada sincrónica
+        if translated_symptom:  # Asegurarse de que no sea None
+            translated_symptoms.append(translated_symptom)
     
-    return translated_symptoms
-
+    return translated_symptoms  # Devuelve una lista de síntomas traducidos
 
 # Función para corregir los síntomas
 def corregir_sintomas(symptoms, available_symptoms):

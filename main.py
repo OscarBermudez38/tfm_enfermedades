@@ -28,22 +28,22 @@ def cargar_modelo():
         X = df_symptoms.drop(columns=columnas_presentes)
         X.columns = [col.lower() for col in X.columns]
         
-        st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
+        print(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
     except Exception as e:
-        st.markdown(f"⚠️ Error al cargar el modelo o los datos: {e}")
+        print(f"⚠️ Error al cargar el modelo o los datos: {e}")
         raise e
     
     # Verificación de las columnas de X
-    st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
+    print(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
 def traducir_texto(texto, src="es", dest="en"):
     """Traduce el texto siempre de español a inglés de manera síncrona."""
     try:
         # Traducción síncrona
         translated = translator.translate(texto, src=src, dest=dest)
-        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
-        st.markdown(f"⚠️ Error al traducir: {e}")
+        print(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
 # Función para traducir los síntomas (sincrónica)
@@ -68,38 +68,38 @@ def corregir_sintomas(symptoms, available_symptoms):
     corrected = []
     
     for symptom in translated_symptoms:
-        st.markdown(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
+        print(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
         closest_match = difflib.get_close_matches(symptom.lower(), available_symptoms_lower.keys(), n=1, cutoff=0.5)
         
-        st.markdown(f"🔍 Closest match: {closest_match}")
+        print(f"🔍 Closest match: {closest_match}")
         
         if closest_match:
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
         else:
-            st.markdown(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
+            print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
     
     return corrected
 
 def predict_all_diseases_with_treatments(symptom_input):
-    st.markdown(f"\n🔍 Síntomas ingresados: {symptom_input}")
+    print(f"\n🔍 Síntomas ingresados: {symptom_input}")
     symptom_input = [symptom.lower() for symptom in symptom_input]
     
     # Asegurar que las columnas de X están en minúsculas
-    st.markdown(f"🔍 Columnas en X antes de la predicción: {X.columns.tolist()}")
+    print(f"🔍 Columnas en X antes de la predicción: {X.columns.tolist()}")
     X.columns = [col.lower() for col in X.columns]
     
     # Vector de síntomas
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
-    st.markdown(f"🔍 Vector de síntomas generado: {symptom_vector}")
+    print(f"🔍 Vector de síntomas generado: {symptom_vector}")
     
     # Ajustar el tamaño del vector de acuerdo con la entrada del modelo
     symptom_vector = symptom_vector[:, :model.input_shape[1]]  # Ajustar al tamaño correcto
     
     num_sintomas_activos = symptom_vector.sum()
-    st.markdown(f"✔️ Número de síntomas activos en el vector: {num_sintomas_activos}")
+    print(f"✔️ Número de síntomas activos en el vector: {num_sintomas_activos}")
 
     if num_sintomas_activos == 0:
-        st.markdown("⚠️ No se encontraron síntomas en el dataset. Revisa los síntomas ingresados.")
+        print("⚠️ No se encontraron síntomas en el dataset. Revisa los síntomas ingresados.")
         return []
     
     # Hacer la predicción

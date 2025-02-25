@@ -29,11 +29,13 @@ def cargar_modelo():
 
 # Función para traducir texto de español a inglés (sincrónica)
 def traducir_texto(texto, src="es", dest="en"):
-    """Traduce el texto siempre de español a inglés de manera sincrónica."""
+    """Traduce el texto siempre de español a inglés de manera síncrona."""
+    translator = Translator()
     try:
-        translated = translator.translate(texto, src=src, dest=dest)  # Usamos la versión sincrónica
-        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
-        return translated.text
+        # La traducción ahora es síncrona
+        translated = translator.translate(texto, src=src, dest=dest).text
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated}'")  # Muestra la traducción
+        return translated
     except Exception as e:
         st.markdown(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error en la traducción, retorna el texto original

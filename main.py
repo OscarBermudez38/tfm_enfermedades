@@ -6,10 +6,10 @@ import difflib
 
 def cargar_modelo():
     global model, mlb, X, df_treatments
-    model = tf.keras.models.load_model(r"C:\Users\Darito\Desktop\tfm medico\models\disease_nn_model.h5")
-    mlb = joblib.load(r"C:\Users\Darito\Desktop\tfm medico\datasets\label_binarizer.pkl")
-    df_symptoms = pd.read_csv(r"C:\Users\Darito\Desktop\tfm medico\datasets\Diseases_Symptoms_Processed.csv")
-    df_treatments = pd.read_csv(r"C:\Users\Darito\Desktop\tfm medico\datasets\Diseases_Treatments_Processed.csv")
+    model = tf.keras.models.load_model("/models/disease_nn_model.h5")
+    mlb = joblib.load("/datasets/label_binarizer.pkl")
+    df_symptoms = pd.read_csv("/datasets/Diseases_Symptoms_Processed.csv")
+    df_treatments = pd.read_csv("/datasets/Diseases_Treatments_Processed.csv")
     
     # Asegurar que solo incluimos síntomas en X (excluyendo columnas irrelevantes)
     columnas_excluir = ["code", "name", "treatments"]  # Añadir "treatments" si existe

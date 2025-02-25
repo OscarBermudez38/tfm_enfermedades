@@ -39,4 +39,4 @@ if st.button("Predecir Enfermedades", key="predict_button"):
             st.subheader(f"{enfermedad} - {probabilidad*100:.2f}% de probabilidad")
             st.write("### Posibles tratamientos:")
             for tratamiento in tratamientos:
-                st.write(f"- {tratamiento}")
+                st.write(f"- {traducir_texto(tratamiento)}")

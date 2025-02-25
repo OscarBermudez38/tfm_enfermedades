@@ -4,3 +4,4 @@ tensorflow
 joblib
 pandas
 scikit-learn
+googletrans

@@ -36,7 +36,7 @@ if st.button("Predecir Enfermedades", key="predict_button"):
         st.warning("No se encontraron enfermedades relacionadas con estos síntomas.")
     else:
         for enfermedad, probabilidad, tratamientos in resultados[:3]:
-            st.subheader(f"{enfermedad} - {probabilidad*100:.2f}% de probabilidad")
+            st.subheader(f"{main.traducir_texto(enfermedad,"en","es")} - {probabilidad*100:.2f}% de probabilidad")
             st.write("### Posibles tratamientos:")
             for tratamiento in tratamientos:
                 st.write(f"- {main.traducir_texto(tratamiento,"en","es")}")

@@ -26,33 +26,35 @@ def cargar_modelo():
     # Verificar la nueva dimensión de X
     print(f"✅ Dataset de síntomas cargado. Dimensión final: {X.shape}")
 
-def detectar_idioma(texto):
-    """Detecta el idioma del texto."""
-    try:
-        return detect(texto)
-    except:
-        return "unknown"  # Si no se puede detectar, devuelve "unknown"
-
+# Función para traducir texto de español a inglés
 def traducir_texto(texto, src="es", dest="en"):
-    """Traduce el texto si es necesario."""
-    if detectar_idioma(texto) == src:  # Solo traduce si el texto está en español
-        translator = Translator()
-        try:
-            return translator.translate(texto, src=src, dest=dest).text
-        except:
-            return texto  # Si hay error en la traducción, retorna el texto original
-    return texto  # Si ya está en inglés, lo deja igual
+    translator = Translator()
 
+    """Traduce el texto siempre de español a inglés."""
+    try:
+        translated = translator.translate(texto, src=src, dest=dest).text
+        print(f"📝 Traducido '{texto}' -> '{translated}'")  # Muestra la traducción
+        return translated
+    except Exception as e:
+        print(f"⚠️ Error al traducir: {e}")
+        return texto  # Si hay error en la traducción, retorna el texto original
+
+# Función para corregir los síntomas
 def corregir_sintomas(symptoms, available_symptoms):
     """Traduce y corrige los síntomas según la lista disponible en inglés."""
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
     corrected = []
     
     for symptom in symptoms:
-        translated_symptom = traducir_texto(symptom, src="es", dest="en").lower()  # Traducción solo si es español
+        translated_symptom = traducir_texto(symptom, src="es", dest="en").lower()  # Traducción siempre de español a inglés
+        print(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{translated_symptom}'")  # Imprime antes de buscar coincidencias
         
+        # Obtenemos las coincidencias más cercanas
         closest_match = difflib.get_close_matches(translated_symptom, available_symptoms_lower.keys(), n=1, cutoff=0.5)
-
+        
+        # Imprimir los resultados de closest_match
+        print(f"🔍 Closest match: {closest_match}")
+        
         if closest_match:
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
         else:

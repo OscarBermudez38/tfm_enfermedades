@@ -27,19 +27,17 @@ def cargar_modelo():
     # Verificación de las columnas de X
     st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
 
-# Función para traducir texto de español a inglés
 def traducir_texto(texto, src="es", dest="en"):
     """Traduce el texto siempre de español a inglés."""
-    translator = Translator()
-
+    print(f"⚡ Sintoma a traducir: {texto}")  # Agregar depuración aquí
     try:
-        # Traducir texto de manera sincrónica
         translated = translator.translate(texto, src=src, dest=dest).text
-        print(f"📝 Traducido '{texto}' -> '{translated}'")  # Muestra la traducción
+        print(f"📝 Traducido '{texto}' -> '{translated}'")
         return translated
     except Exception as e:
         print(f"⚠️ Error al traducir: {e}")
-        return texto  # Si hay error en la traducción, retorna el texto original
+        return texto
+
 
 # Función para corregir los síntomas
 def corregir_sintomas(symptoms, available_symptoms):

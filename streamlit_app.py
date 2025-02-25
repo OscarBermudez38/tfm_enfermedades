@@ -9,24 +9,15 @@ import main
 # Cargar el modelo y los datos solo si no están en la sesión
 if "model_loaded" not in st.session_state:
     with st.spinner("Cargando modelo..."):
-        model = tf.keras.models.load_model("models/disease_nn_model.h5")
-        mlb = joblib.load("datasets/label_binarizer.pkl")
-        df_symptoms = pd.read_csv("datasets/Diseases_Symptoms_Processed.csv")
-        df_treatments = pd.read_csv("datasets/Diseases_Treatments_Processed.csv")
-
-        columnas_excluir = ["code", "name", "treatments"]
-        columnas_presentes = [col for col in columnas_excluir if col in df_symptoms.columns]
-
-        X = df_symptoms.drop(columns=columnas_presentes)
-        X.columns = [col.lower() for col in X.columns]
-
+        # Llama a la función cargar_modelo() de main.py
+        main.cargar_modelo()
+        
+        # Almacena las variables globales en la sesión de Streamlit
         st.session_state["model_loaded"] = True
-        st.session_state["X"] = X
-        st.session_state["df_treatments"] = df_treatments
-        st.session_state["mlb"] = mlb
-        st.session_state["model"] = model
-
-    st.success("Modelo cargado exitosamente.")
+        st.session_state["X"] = main.X
+        st.session_state["df_treatments"] = main.df_treatments
+        st.session_state["mlb"] = main.mlb
+        st.session_state["model"] = main.model
 
 # Interfaz de usuario en Streamlit
 st.title("Asistente Médico IA")

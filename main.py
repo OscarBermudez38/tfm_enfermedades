@@ -13,17 +13,22 @@ translator = Translator()
 # Función para cargar el modelo y los datos
 def cargar_modelo():
     global model, mlb, X, df_treatments
-    model = tf.keras.models.load_model("/models/disease_nn_model.h5")
-    mlb = joblib.load("/datasets/label_binarizer.pkl")
-    df_symptoms = pd.read_csv("/datasets/Diseases_Symptoms_Processed.csv")
-    df_treatments = pd.read_csv("/datasets/Diseases_Treatments_Processed.csv")
-    
-    # Aseguramos que solo incluimos síntomas en X (excluyendo columnas irrelevantes)
-    columnas_excluir = ["code", "name", "treatments"]  # Añadir "treatments" si existe
-    columnas_presentes = [col for col in columnas_excluir if col in df_symptoms.columns]
-    
-    X = df_symptoms.drop(columns=columnas_presentes)
-    X.columns = [col.lower() for col in X.columns]  # Convertir los nombres de columnas a minúsculas
+    try:
+        model = tf.keras.models.load_model("/models/disease_nn_model.h5")
+        mlb = joblib.load("/datasets/label_binarizer.pkl")
+        df_symptoms = pd.read_csv("/datasets/Diseases_Symptoms_Processed.csv")
+        df_treatments = pd.read_csv("/datasets/Diseases_Treatments_Processed.csv")
+        
+        columnas_excluir = ["code", "name", "treatments"]
+        columnas_presentes = [col for col in columnas_excluir if col in df_symptoms.columns]
+        
+        X = df_symptoms.drop(columns=columnas_presentes)
+        X.columns = [col.lower() for col in X.columns]
+        
+        st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
+    except Exception as e:
+        st.markdown(f"⚠️ Error al cargar el modelo o los datos: {e}")
+        raise e
 
     # Verificación de las columnas de X
     st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")

@@ -32,10 +32,10 @@ def traducir_texto(texto, src="es", dest="en"):
     """Traduce el texto siempre de español a inglés de manera sincrónica."""
     try:
         translated = translator.translate(texto, src=src, dest=dest)  # Usamos la versión sincrónica
-        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text
     except Exception as e:
-        print(f"⚠️ Error al traducir: {e}")
+        st.markdown(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error en la traducción, retorna el texto original
 
 # Función para traducir los síntomas (ahora sin asyncio)
@@ -59,15 +59,15 @@ def corregir_sintomas(symptoms, available_symptoms):
     corrected = []
     
     for symptom in translated_symptoms:
-        print(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
+        st.markdown(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
         closest_match = difflib.get_close_matches(symptom.lower(), available_symptoms_lower.keys(), n=1, cutoff=0.5)
         
-        print(f"🔍 Closest match: {closest_match}")
+        st.markdown(f"🔍 Closest match: {closest_match}")
         
         if closest_match:
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
         else:
-            print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
+            st.markdown(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
     
     return corrected
 

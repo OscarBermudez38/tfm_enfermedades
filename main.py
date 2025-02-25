@@ -32,13 +32,13 @@ def traducir_texto(texto, src="es", dest="en"):
     """Traduce el texto siempre de español a inglés de manera síncrona."""
     translator = Translator()
     try:
-        # La traducción ahora es síncrona
-        translated = translator.translate(texto, src=src, dest=dest).text
-        st.markdown(f"📝 Traducido '{texto}' -> '{translated}'")  # Muestra la traducción
-        return translated
+        # Traducción síncrona sin async/await
+        translated = translator.translate(texto, src=src, dest=dest)
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        return translated.text  # Accede al texto traducido
     except Exception as e:
         st.markdown(f"⚠️ Error al traducir: {e}")
-        return texto  # Si hay error en la traducción, retorna el texto original
+        return texto  # Si hay error, retorna el texto original
 
 # Función para traducir los síntomas (ahora sin asyncio)
 def traducir_sintomas(symptoms):

@@ -12,6 +12,7 @@ translator = Translator()
 
 # Función para cargar el modelo y los datos
 def cargar_modelo():
+    
     global model, mlb, X, df_treatments
     try:
         # Rutas relativas a los archivos
@@ -35,12 +36,13 @@ def cargar_modelo():
     
     # Verificación de las columnas de X
     print(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
+    
 def traducir_texto(texto, src="es", dest="en"):
     """Traduce el texto siempre de español a inglés de manera síncrona."""
     try:
         # Traducción síncrona
         translated = translator.translate(texto, src=src, dest=dest)
-        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
         print(f"⚠️ Error al traducir: {e}")

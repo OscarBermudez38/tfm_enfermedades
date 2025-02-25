@@ -1,12 +1,15 @@
+import streamlit as st
 import numpy as np
 import tensorflow as tf
 import joblib
 import pandas as pd
 import difflib
 from googletrans import Translator
-from langdetect import detect
 
+# Traductor global
+translator = Translator()
 
+# Función para cargar el modelo y los datos
 def cargar_modelo():
     global model, mlb, X, df_treatments
     model = tf.keras.models.load_model("/models/disease_nn_model.h5")
@@ -14,29 +17,25 @@ def cargar_modelo():
     df_symptoms = pd.read_csv("/datasets/Diseases_Symptoms_Processed.csv")
     df_treatments = pd.read_csv("/datasets/Diseases_Treatments_Processed.csv")
     
-    # Asegurar que solo incluimos síntomas en X (excluyendo columnas irrelevantes)
+    # Aseguramos que solo incluimos síntomas en X (excluyendo columnas irrelevantes)
     columnas_excluir = ["code", "name", "treatments"]  # Añadir "treatments" si existe
     columnas_presentes = [col for col in columnas_excluir if col in df_symptoms.columns]
     
     X = df_symptoms.drop(columns=columnas_presentes)
+    X.columns = [col.lower() for col in X.columns]  # Convertir los nombres de columnas a minúsculas
 
-    # Convertir nombres de columnas a minúsculas
-    X.columns = [col.lower() for col in X.columns]
-
-    # Verificar la nueva dimensión de X
-    print(f"✅ Dataset de síntomas cargado. Dimensión final: {X.shape}")
+    # Verificación de las columnas de X
+    st.write(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
 
 # Función para traducir texto de español a inglés
 def traducir_texto(texto, src="es", dest="en"):
-    translator = Translator()
-
     """Traduce el texto siempre de español a inglés."""
     try:
         translated = translator.translate(texto, src=src, dest=dest).text
-        print(f"📝 Traducido '{texto}' -> '{translated}'")  # Muestra la traducción
+        st.write(f"📝 Traducido '{texto}' -> '{translated}'")  # Muestra la traducción
         return translated
     except Exception as e:
-        print(f"⚠️ Error al traducir: {e}")
+        st.write(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error en la traducción, retorna el texto original
 
 # Función para corregir los síntomas
@@ -47,37 +46,41 @@ def corregir_sintomas(symptoms, available_symptoms):
     
     for symptom in symptoms:
         translated_symptom = traducir_texto(symptom, src="es", dest="en").lower()  # Traducción siempre de español a inglés
-        print(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{translated_symptom}'")  # Imprime antes de buscar coincidencias
+        st.write(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{translated_symptom}'")  # Imprime antes de buscar coincidencias
         
         # Obtenemos las coincidencias más cercanas
         closest_match = difflib.get_close_matches(translated_symptom, available_symptoms_lower.keys(), n=1, cutoff=0.5)
         
         # Imprimir los resultados de closest_match
-        print(f"🔍 Closest match: {closest_match}")
+        st.write(f"🔍 Closest match: {closest_match}")
         
         if closest_match:
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
         else:
-            print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{translated_symptom}'")
+            st.write(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{translated_symptom}'")
     
     return corrected
 
 def predict_all_diseases_with_treatments(symptom_input):
-    print(f"\n🔍 Síntomas ingresados: {symptom_input}")
+    st.write(f"\n🔍 Síntomas ingresados: {symptom_input}")
     symptom_input = [symptom.lower() for symptom in symptom_input]
     
     # Asegurar que las columnas de X están en minúsculas
+    st.write(f"🔍 Columnas en X antes de la predicción: {X.columns.tolist()}")
     X.columns = [col.lower() for col in X.columns]
     
     # Vector de síntomas
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
+    st.write(f"🔍 Vector de síntomas generado: {symptom_vector}")
+    
+    # Ajustar el tamaño del vector de acuerdo con la entrada del modelo
     symptom_vector = symptom_vector[:, :model.input_shape[1]]  # Ajustar al tamaño correcto
     
     num_sintomas_activos = symptom_vector.sum()
-    print(f"✔️ Número de síntomas activos en el vector: {num_sintomas_activos}")
+    st.write(f"✔️ Número de síntomas activos en el vector: {num_sintomas_activos}")
 
     if num_sintomas_activos == 0:
-        print("⚠️ No se encontraron síntomas en el dataset. Revisa los síntomas ingresados.")
+        st.write("⚠️ No se encontraron síntomas en el dataset. Revisa los síntomas ingresados.")
         return []
     
     # Hacer la predicción
@@ -101,36 +104,36 @@ def predict_all_diseases_with_treatments(symptom_input):
     return results
 
 def iniciar_chatbot():
-    print("Hola, soy tu asistente médico. Voy a preguntarte sobre tus síntomas.")
+    st.write("Hola, soy tu asistente médico. Voy a preguntarte sobre tus síntomas.")
     symptoms = []
     while True:
-        symptom = input("Menciona un síntoma que tengas (o escribe 'listo' para terminar): ")
+        symptom = st.text_input("Menciona un síntoma que tengas (o escribe 'listo' para terminar): ")
         if symptom.lower() == "listo":
             break
         symptoms.append(symptom)
     
     if not symptoms:
-        print("No ingresaste ningún síntoma. Inténtalo de nuevo.")
+        st.write("No ingresaste ningún síntoma. Inténtalo de nuevo.")
         return
     
-    print("\nAnalizando síntomas...")
+    st.write("\nAnalizando síntomas...")
     corrected_symptoms = corregir_sintomas(symptoms, X.columns)
-    print(f"Síntomas corregidos: {corrected_symptoms}")
+    st.write(f"Síntomas corregidos: {corrected_symptoms}")
     
     resultados = predict_all_diseases_with_treatments(corrected_symptoms)
     if not resultados:
-        print("No encontré enfermedades relacionadas con estos síntomas.")
+        st.write("No encontré enfermedades relacionadas con estos síntomas.")
         return
     
     enfermedad, probabilidad, tratamientos = resultados[0]
-    print(f"\nSegún los síntomas proporcionados, podrías tener {enfermedad} con una probabilidad del {probabilidad*100:.2f}%.")
+    st.write(f"\nSegún los síntomas proporcionados, podrías tener {enfermedad} con una probabilidad del {probabilidad*100:.2f}%.")
     if tratamientos:
-        print("Posibles tratamientos:")
+        st.write("Posibles tratamientos:")
         for tratamiento in tratamientos:
-            print(f"- {tratamiento}")
+            st.write(f"- {tratamiento}")
     else:
-        print("No hay tratamientos disponibles en la base de datos.")
-    
+        st.write("No hay tratamientos disponibles en la base de datos.")
+
 if __name__ == "__main__":
     cargar_modelo()
     iniciar_chatbot()

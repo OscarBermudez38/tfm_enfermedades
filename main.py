@@ -4,6 +4,8 @@ import joblib
 import pandas as pd
 import difflib
 from googletrans import Translator
+from langdetect import detect
+
 
 def cargar_modelo():
     global model, mlb, X, df_treatments
@@ -24,24 +26,31 @@ def cargar_modelo():
     # Verificar la nueva dimensión de X
     print(f"✅ Dataset de síntomas cargado. Dimensión final: {X.shape}")
 
+def detectar_idioma(texto):
+    """Detecta el idioma del texto."""
+    try:
+        return detect(texto)
+    except:
+        return "unknown"  # Si no se puede detectar, devuelve "unknown"
 
 def traducir_texto(texto, src="es", dest="en"):
-    translator = Translator()
-    try:
-        return translator.translate(texto, src=src, dest=dest).text
-    except:
-        return texto  # Si hay error en la traducción, retorna el texto original
+    """Traduce el texto si es necesario."""
+    if detectar_idioma(texto) == src:  # Solo traduce si el texto está en español
+        translator = Translator()
+        try:
+            return translator.translate(texto, src=src, dest=dest).text
+        except:
+            return texto  # Si hay error en la traducción, retorna el texto original
+    return texto  # Si ya está en inglés, lo deja igual
 
 def corregir_sintomas(symptoms, available_symptoms):
-    translator = Translator()
+    """Traduce y corrige los síntomas según la lista disponible en inglés."""
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
     corrected = []
     
     for symptom in symptoms:
-        # Traducir síntoma al inglés
-        translated_symptom = traducir_texto(symptom, src="es", dest="en").lower()
+        translated_symptom = traducir_texto(symptom, src="es", dest="en").lower()  # Traducción solo si es español
         
-        # Buscar la coincidencia más cercana en la lista de síntomas disponibles
         closest_match = difflib.get_close_matches(translated_symptom, available_symptoms_lower.keys(), n=1, cutoff=0.5)
 
         if closest_match:
@@ -50,6 +59,7 @@ def corregir_sintomas(symptoms, available_symptoms):
             print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{translated_symptom}'")
     
     return corrected
+
 def predict_all_diseases_with_treatments(symptom_input):
     print(f"\n🔍 Síntomas ingresados: {symptom_input}")
     symptom_input = [symptom.lower() for symptom in symptom_input]

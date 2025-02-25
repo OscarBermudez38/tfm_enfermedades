@@ -27,38 +27,47 @@ def cargar_modelo():
     # Verificación de las columnas de X
     st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
 
-def traducir_texto(texto, src="es", dest="en"):
-    """Traduce el texto siempre de español a inglés."""
-    st.markdown(f"⚡ Sintoma a traducir: {texto}")  # Agregar depuración aquí
+async def traducir_texto(texto, src="es", dest="en"):
+    """Traduce el texto siempre de español a inglés de manera asincrónica."""
     try:
-        translated = translator.translate(texto, src=src, dest=dest).text
-        st.markdown(f"📝 Traducido '{texto}' -> '{translated}'")
-        return translated
+        # Traducir texto de manera asincrónica
+        translated = await translator.translate(texto, src=src, dest=dest)
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        return translated.text
     except Exception as e:
         st.markdown(f"⚠️ Error al traducir: {e}")
-        return texto
+        return texto  # Si hay error en la traducción, retorna el texto original
+
+# Función para usar la traducción correctamente
+def traducir_sintomas(symptoms):
+    translated_symptoms = []
+    for symptom in symptoms:
+        # Llamamos a la función asincrónica
+        translated_symptom = asyncio.run(traducir_texto(symptom))  # Esperamos la traducción
+        translated_symptoms.append(translated_symptom)
+    
+    return translated_symptoms
 
 
 # Función para corregir los síntomas
 def corregir_sintomas(symptoms, available_symptoms):
     """Traduce y corrige los síntomas según la lista disponible en inglés."""
+    # Traducir los síntomas primero
+    translated_symptoms = traducir_sintomas(symptoms)
+    
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
     corrected = []
     
-    for symptom in symptoms:
-        translated_symptom = traducir_texto(symptom, src="es", dest="en").lower()  # Traducción siempre de español a inglés
-        st.markdown(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{translated_symptom}'")  # Imprime antes de buscar coincidencias
+    for symptom in translated_symptoms:
+        print(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
+        closest_match = difflib.get_close_matches(symptom.lower(), available_symptoms_lower.keys(), n=1, cutoff=0.5)
         
-        # Obtenemos las coincidencias más cercanas
-        closest_match = difflib.get_close_matches(translated_symptom, available_symptoms_lower.keys(), n=1, cutoff=0.5)
-        
-        # Imprimir los resultados de closest_match
-        st.markdown(f"🔍 Closest match: {closest_match}")
+        print(f"🔍 Closest match: {closest_match}")
         
         if closest_match:
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
         else:
-            st.markdown(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{translated_symptom}'")
+            print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
     
     return corrected
 

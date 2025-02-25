@@ -27,23 +27,23 @@ def cargar_modelo():
     # Verificación de las columnas de X
     st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
 
-async def traducir_texto(texto, src="es", dest="en"):
-    """Traduce el texto siempre de español a inglés de manera asincrónica."""
+# Función para traducir texto de español a inglés (sincrónica)
+def traducir_texto(texto, src="es", dest="en"):
+    """Traduce el texto siempre de español a inglés de manera sincrónica."""
     try:
-        # Traducir texto de manera asincrónica
-        translated = await translator.translate(texto, src=src, dest=dest)
-        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        translated = translator.translate(texto, src=src, dest=dest)  # Usamos la versión sincrónica
+        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text
     except Exception as e:
-        st.markdown(f"⚠️ Error al traducir: {e}")
+        print(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error en la traducción, retorna el texto original
 
-# Función para usar la traducción correctamente
+# Función para traducir los síntomas (ahora sin asyncio)
 def traducir_sintomas(symptoms):
     translated_symptoms = []
     for symptom in symptoms:
-        # Llamamos a la función asincrónica
-        translated_symptom = asyncio.run(traducir_texto(symptom))  # Esperamos la traducción
+        # Llamamos a la función para traducir cada síntoma sin usar async
+        translated_symptom = traducir_texto(symptom)  # Llamada sincrónica
         translated_symptoms.append(translated_symptom)
     
     return translated_symptoms

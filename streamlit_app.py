@@ -9,7 +9,7 @@ import difflib
 import main
 
 # Configuración de la API de OpenAI
-OPENAI_API_KEY = "key.txt"  # Reemplázala con tu clave real
+OPENAI_API_KEY = ""  # Reemplázala con tu clave real
 openai.api_key = OPENAI_API_KEY
 
 # Cargar el modelo y los datos solo si no están en la sesión

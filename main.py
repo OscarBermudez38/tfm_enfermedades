@@ -30,9 +30,9 @@ def cargar_modelo():
         X.columns = [col.lower() for col in X.columns]
 
         # Verificar la nueva dimensión de X
-        st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
+        print(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
     except Exception as e:
-        st.markdown(f"⚠️ Error al cargar el modelo o los datos: {e}")
+        print(f"⚠️ Error al cargar el modelo o los datos: {e}")
         raise e
     
 def traducir_texto(texto, src="es", dest="en"):

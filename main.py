@@ -1,4 +1,3 @@
-import streamlit as st
 import numpy as np
 import tensorflow as tf
 import joblib
@@ -6,36 +5,33 @@ import pandas as pd
 import difflib
 from googletrans import Translator
 from deep_translator import GoogleTranslator
+import streamlit as st
+import openai
 
-# Traductor global
-translator = Translator()
-
-# Función para cargar el modelo y los datos
 def cargar_modelo():
-    
-    global model, mlb, X, df_treatments
     try:
-        # Rutas relativas a los archivos
+
+        global model, mlb, X, df_treatments
         model = tf.keras.models.load_model("models/disease_nn_model.h5")  # Ruta relativa al modelo
         mlb = joblib.load("datasets/label_binarizer.pkl")  # Ruta relativa al binarizador
         df_symptoms = pd.read_csv("datasets/Diseases_Symptoms_Processed.csv")  # Ruta relativa al dataset de síntomas
         df_treatments = pd.read_csv("datasets/Diseases_Treatments_Processed.csv")  # Ruta relativa al dataset de tratamientos
-        
-        # Excluir columnas irrelevantes
-        columnas_excluir = ["code", "name", "treatments"]
+
+        # Asegurar que solo incluimos síntomas en X (excluyendo columnas irrelevantes)
+        columnas_excluir = ["code", "name", "treatments"]  # Añadir "treatments" si existe
         columnas_presentes = [col for col in columnas_excluir if col in df_symptoms.columns]
-        
-        # Crear X (dataset de síntomas)
+
+        X = df_symptoms.drop(columns=columnas_presentes)
+
+        # Convertir nombres de columnas a minúsculas
         X = df_symptoms.drop(columns=columnas_presentes)
         X.columns = [col.lower() for col in X.columns]
-        
+
+        # Verificar la nueva dimensión de X
         print(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
     except Exception as e:
         print(f"⚠️ Error al cargar el modelo o los datos: {e}")
         raise e
-    
-    # Verificación de las columnas de X
-    print(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
     
 def traducir_texto(texto, src="es", dest="en"):
     """Traduce el texto siempre de español a inglés de manera síncrona."""
@@ -48,7 +44,6 @@ def traducir_texto(texto, src="es", dest="en"):
         print(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
-# Función para traducir los síntomas (sincrónica)
 def traducir_sintomas(symptoms):
     """Traduce una lista de síntomas de español a inglés."""
     translated_symptoms = []
@@ -87,14 +82,10 @@ def predict_all_diseases_with_treatments(symptom_input):
     symptom_input = [symptom.lower() for symptom in symptom_input]
     
     # Asegurar que las columnas de X están en minúsculas
-    print(f"🔍 Columnas en X antes de la predicción: {X.columns.tolist()}")
     X.columns = [col.lower() for col in X.columns]
     
     # Vector de síntomas
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
-    print(f"🔍 Vector de síntomas generado: {symptom_vector}")
-    
-    # Ajustar el tamaño del vector de acuerdo con la entrada del modelo
     symptom_vector = symptom_vector[:, :model.input_shape[1]]  # Ajustar al tamaño correcto
     
     num_sintomas_activos = symptom_vector.sum()
@@ -124,37 +115,112 @@ def predict_all_diseases_with_treatments(symptom_input):
     
     return results
 
+
 def iniciar_chatbot():
-    st.write("Hola, soy tu asistente médico. Voy a preguntarte sobre tus síntomas.")
+    print("Hola, soy tu asistente médico. Voy a preguntarte sobre tus síntomas.")
     symptoms = []
     while True:
-        symptom = st.text_input("Menciona un síntoma que tengas (o escribe 'listo' para terminar): ")
+        symptom = input("Menciona un síntoma que tengas (o escribe 'listo' para terminar): ")
         if symptom.lower() == "listo":
             break
         symptoms.append(symptom)
     
     if not symptoms:
-        st.write("No ingresaste ningún síntoma. Inténtalo de nuevo.")
+        print("No ingresaste ningún síntoma. Inténtalo de nuevo.")
         return
     
-    st.write("\nAnalizando síntomas...")
+    print("\nAnalizando síntomas...")
     corrected_symptoms = corregir_sintomas(symptoms, X.columns)
-    st.write(f"Síntomas corregidos: {corrected_symptoms}")
+    print(f"Síntomas corregidos: {corrected_symptoms}")
     
     resultados = predict_all_diseases_with_treatments(corrected_symptoms)
     if not resultados:
-        st.write("No encontré enfermedades relacionadas con estos síntomas.")
+        print("No encontré enfermedades relacionadas con estos síntomas.")
         return
     
     enfermedad, probabilidad, tratamientos = resultados[0]
-    st.write(f"\nSegún los síntomas proporcionados, podrías tener {enfermedad} con una probabilidad del {probabilidad*100:.2f}%.")
+    print(f"\nSegún los síntomas proporcionados, podrías tener {enfermedad} con una probabilidad del {probabilidad*100:.2f}%.")
     if tratamientos:
-        st.write("Posibles tratamientos:")
+        print("Posibles tratamientos:")
         for tratamiento in tratamientos:
-            st.write(f"- {tratamiento}")
+            print(f"- {tratamiento}")
     else:
-        st.write("No hay tratamientos disponibles en la base de datos.")
-
+        print("No hay tratamientos disponibles en la base de datos.")
+    
 if __name__ == "__main__":
     cargar_modelo()
     iniciar_chatbot()
+    
+    
+
+# Función para interactuar con la API de ChatGPT
+def chat_with_gpt(disease_predictions):
+    if not disease_predictions:
+        return "No se encontraron enfermedades relacionadas con estos síntomas."
+    
+    formatted_predictions = "\n".join([f"{disease} - {prob*100:.2f}%" for disease, prob, *_ in disease_predictions])
+    prompt = f"""
+    Eres un asistente médico experto. A continuación, te presento los resultados de un modelo de IA que analiza síntomas y predice enfermedades probables:
+    
+    {formatted_predictions}
+    
+    Para cada enfermedad detectada, también se incluyen tratamientos recomendados según el modelo. Explica los tratamientos detalladamente, incluyendo ejemplos, efectividad y posibles efectos secundarios.
+    
+    Tratamientos recomendados:
+    """ + "\n".join([f"{disease}: {', '.join(treatments)}" for disease, _, treatments in disease_predictions])
+    
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "system", "content": "Eres un asistente médico experto."},
+                      {"role": "user", "content": prompt}],
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error en la consulta: {str(e)}"
+    
+# Inicializar session_state para almacenar síntomas corregidos
+if "symptoms_corrected" not in st.session_state:
+    st.session_state["symptoms_corrected"] = {}
+
+# Función mejorada para sugerir síntomas solo cuando no hay coincidencia exacta
+def sugerir_sintomas(symptoms, available_symptoms):
+    available_symptoms_lower = {s.lower(): s for s in available_symptoms}
+    corrected = []
+
+    for symptom in symptoms:
+        symptom_lower = symptom.lower()
+
+        # Si el síntoma ya está en el dataset, se usa directamente
+        if symptom_lower in available_symptoms_lower:
+            corrected.append(available_symptoms_lower[symptom_lower])
+        else:
+            # Si el usuario ya corrigió este síntoma, usar la opción guardada
+            if symptom_lower in st.session_state["symptoms_corrected"]:
+                corrected_symptom = st.session_state["symptoms_corrected"][symptom_lower]
+                symptom_lower = main.corregir_sintomas(symptoms, st.session_state["X"].columns)
+                corrected.append(corrected_symptom)
+            else:
+                # Buscar síntomas similares
+                closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
+
+                if closest_matches:
+                    # Mostrar opciones al usuario
+                    selected_option = st.radio(
+                        f"¿'{symptom}' no es un síntoma registrado, te referias a ...?", 
+                        [available_symptoms_lower[m] for m in closest_matches] + ["Ninguna de las anteriores"], 
+                        index=0,
+                        key=f"radio_{symptom_lower}"  # Clave única para evitar conflictos
+                    )
+
+                    if selected_option != "Ninguna de las anteriores":
+                        corrected.append(selected_option)
+                        st.session_state["symptoms_corrected"][symptom_lower] = selected_option  # Guardar selección del usuario
+                    else:
+                        corrected.append(symptom)  # Mantenerlo sin cambios si no hay corrección
+                else:
+                    st.warning(f"No se encontraron coincidencias para '{symptom}'.")
+                    corrected.append(symptom)  # Mantenerlo sin cambios si no hay sugerencias
+
+    return corrected

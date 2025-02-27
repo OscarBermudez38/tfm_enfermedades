@@ -103,6 +103,7 @@ def predict_all_diseases_with_treatments(symptom_input):
     
     # Hacer la predicción
     probabilities = model.predict(symptom_vector)[0]
+    mlb = st.session_state["mlb"]  # Recuperar el binarizador desde la sesión
     disease_probabilities = {mlb.classes_[i]: prob for i, prob in enumerate(probabilities)}
     sorted_diseases = sorted(disease_probabilities.items(), key=lambda x: x[1], reverse=True)
     

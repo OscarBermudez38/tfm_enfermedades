@@ -68,7 +68,10 @@ def corregir_sintomas(symptoms, available_symptoms):
     
     if translated_symptoms:
         for symptom in translated_symptoms:
-            corrected.append(available_symptoms_lower[symptom])  # Recupera el nombre original en inglés
+            if symptom in available_symptoms_lower:
+                corrected.append(available_symptoms_lower[symptom])  # Recupera el nombre original en inglés
+            else:
+                corrected.append(symptom)
     else:
         st.markdown(f"⚠️ No se encontraron síntomas traducidos.")
         

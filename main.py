@@ -187,16 +187,16 @@ def chat_with_gpt(disease_predictions):
 if "symptoms_corrected" not in st.session_state:
     st.session_state["symptoms_corrected"] = {}
 
-# Función mejorada para sugerir síntomas solo cuando no hay coincidencia exacta
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
     corrected = []
 
     for symptom in symptoms:
         symptom_lower = symptom.lower()
+        symptom_lower_corrected = corregir_sintomas(symptoms, available_symptoms_lower)
 
         # Si el síntoma ya está en el dataset, se usa directamente
-        if symptom_lower in available_symptoms_lower:
+        if symptom_lower_corrected in available_symptoms_lower:
             corrected.append(available_symptoms_lower[symptom_lower])
         else:
             # Si el usuario ya corrigió este síntoma, usar la opción guardada

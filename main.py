@@ -225,6 +225,9 @@ def sugerir_sintomas(symptoms, available_symptoms):
                         )
 
                         if selected_option != "Ninguna de las anteriores":
+                            #¿No deberia eliminar el sintoma antiguo?
+                            if symptom_lower in st.session_state["symptoms_corrected"]:
+                                del st.session_state["symptoms_corrected"][symptom_lower]
                             corrected.append(selected_option)
                             st.session_state["symptoms_corrected"][symptom_lower] = selected_option  # Guardar selección del usuario
                         else:
@@ -232,7 +235,6 @@ def sugerir_sintomas(symptoms, available_symptoms):
                     else:
                         st.warning(f"No se encontraron coincidencias para '{symptom}'.")
                         corrected.append(symptom)  # Mantenerlo sin cambios si no hay sugerencias
-                        
     for symptom in corrected:
         st.markdown(f"🔍 Síntoma corregido: '{symptom}'")
     

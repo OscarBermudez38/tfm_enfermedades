@@ -85,6 +85,7 @@ def predict_all_diseases_with_treatments(symptom_input):
     symptom_input = [symptom.lower() for symptom in symptom_input]
     
     # Asegurar que las columnas de X están en minúsculas
+    X = st.session_state["X"]
     X.columns = [col.lower() for col in X.columns]
     
     # Vector de síntomas

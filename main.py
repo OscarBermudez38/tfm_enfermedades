@@ -66,19 +66,11 @@ def corregir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
     corrected = []
     
-    for symptom in translated_symptoms:
-        print(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
-        closest_match = difflib.get_close_matches(symptom.lower(), available_symptoms_lower.keys(), n=1, cutoff=0.5)
+    if translated_symptoms:
+        corrected.append(available_symptoms_lower[translated_symptoms[0]])  # Recupera el nombre original en inglés
+    else:
+        print(f"⚠️ No se encontró coincidencia exacta para '{translated_symptoms}' -> Traducción: '{translated_symptoms}'")
         
-        print(f"🔍 Closest match: {closest_match}")
-        
-        if closest_match:
-            corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
-            for symptoms in closest_match:
-                st.markdown(f"🔍 Síntoma '{symptoms}' encontrado en el dataset")
-        else:
-            print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
-            
     print(f"🔍 Síntomas corregidos: {corrected}")
     return corrected
 

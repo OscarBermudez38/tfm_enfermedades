@@ -191,7 +191,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = symptom.lower()
-        symptom_lower = corregir_sintomas(symptoms, st.session_state["X"].columns)
+        symptom_lower = corregir_sintomas(symptoms, available_symptoms)
 
         # Si el síntoma ya está en el dataset, se usa directamente
         if symptom_lower in available_symptoms_lower:
@@ -200,7 +200,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
             # Si el usuario ya corrigió este síntoma, usar la opción guardada
             if symptom_lower in st.session_state["symptoms_corrected"]:
                 corrected_symptom = st.session_state["symptoms_corrected"][symptom_lower]
-                symptom_lower = corregir_sintomas(symptoms, st.session_state["X"].columns)
+                symptom_lower = corregir_sintomas(symptoms, available_symptoms)
                 corrected.append(corrected_symptom)
             else:
                 # Buscar síntomas similares

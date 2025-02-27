@@ -74,6 +74,8 @@ def corregir_sintomas(symptoms, available_symptoms):
         
         if closest_match:
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
+            for symptoms in closest_match:
+                st.markdown(f"🔍 Síntoma '{symptoms}' encontrado en el dataset")
         else:
             print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
             

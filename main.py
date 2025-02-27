@@ -90,7 +90,9 @@ def predict_all_diseases_with_treatments(symptom_input):
     
     # Vector de síntomas
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
+    model = st.session_state["model"]  # Recuperar el modelo de la sesión de Streamlit
     symptom_vector = symptom_vector[:, :model.input_shape[1]]  # Ajustar al tamaño correcto
+
     
     num_sintomas_activos = symptom_vector.sum()
     st.markdown(f"✔️ Número de síntomas activos en el vector: {num_sintomas_activos}")

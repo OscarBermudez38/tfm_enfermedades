@@ -198,7 +198,10 @@ def sugerir_sintomas(symptoms, available_symptoms):
         # Si el síntoma ya está en el dataset, se usa directamente
         if symptom_lower_corrected in available_symptoms_lower:
             corrected.append(available_symptoms_lower[symptom_lower])
+            st.markdown(f"🔍 Síntoma '{symptom_lower_corrected}' encontrado en el dataset.")
         else:
+            st.markdown(f"🔍 Síntoma '{symptom_lower_corrected}' no encontrado en el dataset.")
+
             # Si el usuario ya corrigió este síntoma, usar la opción guardada
             if symptom_lower in st.session_state["symptoms_corrected"]:
                 corrected_symptom = st.session_state["symptoms_corrected"][symptom_lower]
@@ -224,5 +227,6 @@ def sugerir_sintomas(symptoms, available_symptoms):
                 else:
                     st.warning(f"No se encontraron coincidencias para '{symptom}'.")
                     corrected.append(symptom)  # Mantenerlo sin cambios si no hay sugerencias
-
+        
+            
     return corrected

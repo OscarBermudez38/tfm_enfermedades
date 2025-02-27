@@ -76,7 +76,7 @@ def corregir_sintomas(symptoms, available_symptoms):
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
         else:
             st.markdown(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
-    
+    st.markdown(f"🔍 Síntomas corregidos: {corrected}")
     return corrected
 
 def predict_all_diseases_with_treatments(symptom_input):
@@ -193,10 +193,11 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = symptom.lower()
-        symptom_lower = corregir_sintomas(symptoms, available_symptoms)
-        st.markdown(f"🔍 Sintoma original: '{symptom}' -> disponibles: '{available_symptoms}'")  # Imprime la traducción
+        symptom_lower_corrected = corregir_sintomas(symptoms, available_symptoms)
+        for symptom_ in symptom_lower_corrected:
+            st.markdown(f"🔍 Síntoma original: '{symptom_}'")  # Imprime la traducción
         # Si el síntoma ya está en el dataset, se usa directamente
-        if symptom_lower in available_symptoms_lower:
+        if symptom_lower_corrected in available_symptoms_lower:
             corrected.append(available_symptoms_lower[symptom_lower])
         else:
             # Si el usuario ya corrigió este síntoma, usar la opción guardada

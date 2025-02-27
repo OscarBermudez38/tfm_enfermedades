@@ -62,7 +62,7 @@ def corregir_sintomas(symptoms, available_symptoms):
     """Traduce y corrige los síntomas según la lista disponible en inglés."""
     # Traducir los síntomas primero
     translated_symptoms = traducir_sintomas(symptoms)
-    
+    translated_symptoms = {s.lower(): s for s in translated_symptoms}
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
     corrected = []
     

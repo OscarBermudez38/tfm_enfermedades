@@ -232,5 +232,8 @@ def sugerir_sintomas(symptoms, available_symptoms):
                     else:
                         st.warning(f"No se encontraron coincidencias para '{symptom}'.")
                         corrected.append(symptom)  # Mantenerlo sin cambios si no hay sugerencias
+                        
+    for symptom in corrected:
+        st.markdown(f"🔍 Síntoma corregido: '{symptom}'")
     
     return corrected

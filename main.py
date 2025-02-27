@@ -218,7 +218,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
                     if closest_matches:
                         # Mostrar opciones al usuario
                         selected_option = st.radio(
-                            f"¿'{symptom}' no es un síntoma registrado, te referías a ...?", 
+                            f"¿'{symptom}'-'{symptom_lower_corrected}' no es un síntoma registrado, te referías a ...?", 
                             [available_symptoms_lower[m] for m in closest_matches] + ["Ninguna de las anteriores"], 
                             index=0,
                             key=f"radio_{symptom_lower}"  # Clave única para evitar conflictos

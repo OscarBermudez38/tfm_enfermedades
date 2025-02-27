@@ -213,7 +213,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
                     corrected.append(corrected_symptom)
                 else:
                     # Buscar síntomas similares
-                    closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
+                    closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=1, cutoff=0.4)
 
                     if closest_matches:
                         # Mostrar opciones al usuario

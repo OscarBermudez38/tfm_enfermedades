@@ -191,6 +191,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = symptom.lower()
+        symptom_lower = corregir_sintomas(symptoms, st.session_state["X"].columns)
 
         # Si el síntoma ya está en el dataset, se usa directamente
         if symptom_lower in available_symptoms_lower:

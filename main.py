@@ -197,6 +197,8 @@ def sugerir_sintomas(symptoms, available_symptoms):
         for symptom in available_symptoms_lower:
             if symptom == symptom_lower_corrected:
                 st.markdown(f"🔍 Síntoma '{symptom_lower_corrected}' encontrado en el dataset.")
+            else: 
+                st.markdown(f"🔍 nop")
                 
                 
             # Si el síntoma ya está en el dataset, se usa directamente

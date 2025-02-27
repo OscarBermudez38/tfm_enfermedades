@@ -68,10 +68,7 @@ def corregir_sintomas(symptoms, available_symptoms):
     
     if translated_symptoms:
         for symptom in translated_symptoms:
-            if symptom in available_symptoms_lower:
-                corrected.append(available_symptoms_lower[symptom])  # Recupera el nombre original en inglés
-            else:
-                st.markdown(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{translated_symptoms[symptom]}'")
+            corrected.append(available_symptoms_lower[symptom])  # Recupera el nombre original en inglés
     else:
         st.markdown(f"⚠️ No se encontraron síntomas traducidos.")
         
@@ -213,7 +210,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
                     corrected.append(corrected_symptom)
                 else:
                     # Buscar síntomas similares
-                    closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=1, cutoff=0.4)
+                    closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
 
                     if closest_matches:
                         # Mostrar opciones al usuario

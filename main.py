@@ -195,8 +195,11 @@ def sugerir_sintomas(symptoms, available_symptoms):
         symptom_lower = symptom.lower()
         symptom_lower_corrected = corregir_sintomas(symptoms, available_symptoms_lower)
         for symptom in available_symptoms_lower:
-            st.markdown(f"🔍 Sintoma original: '{symptom}'")  # Imprime la traducción
-        # Si el síntoma ya está en el dataset, se usa directamente
+            if symptom == symptom_lower_corrected:
+                st.markdown(f"🔍 Síntoma '{symptom_lower_corrected}' encontrado en el dataset.")
+                
+                
+            # Si el síntoma ya está en el dataset, se usa directamente
         if symptom_lower_corrected in available_symptoms_lower:
             corrected.append(available_symptoms_lower[symptom_lower])
             st.markdown(f"🔍 Síntoma '{symptom_lower_corrected}' encontrado en el dataset.")

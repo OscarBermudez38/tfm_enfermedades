@@ -35,7 +35,8 @@ symptoms_input = st.text_input("Escribe los síntomas separados por comas", key=
 
 if st.button("Analizar síntomas", key="predict_button"):
     symptoms = [s.strip() for s in symptoms_input.split(",") if s.strip()]
-    corrected_symptoms = main.sugerir_sintomas(symptoms, st.session_state["X"].columns)
+    symptoms_en = main.corregir_sintomas(symptoms)
+    corrected_symptoms = main.sugerir_sintomas(symptoms_en, st.session_state["X"].columns)
 
     if corrected_symptoms:
         disease_predictions = main.predict_all_diseases_with_treatments(corrected_symptoms)

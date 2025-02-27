@@ -67,9 +67,13 @@ def corregir_sintomas(symptoms, available_symptoms):
     corrected = []
     
     if translated_symptoms:
-        corrected.append(available_symptoms_lower[translated_symptoms[0]])  # Recupera el nombre original en inglés
+        for symptom in translated_symptoms:
+            if symptom in available_symptoms_lower:
+                corrected.append(available_symptoms_lower[symptom])  # Recupera el nombre original en inglés
+            else:
+                print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{translated_symptoms[symptom]}'")
     else:
-        print(f"⚠️ No se encontró coincidencia exacta para '{translated_symptoms}' -> Traducción: '{translated_symptoms}'")
+        print(f"⚠️ No se encontraron síntomas traducidos.")
         
     print(f"🔍 Síntomas corregidos: {corrected}")
     return corrected

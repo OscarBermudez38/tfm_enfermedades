@@ -186,49 +186,48 @@ def chat_with_gpt(disease_predictions):
 # Inicializar session_state para almacenar síntomas corregidos
 if "symptoms_corrected" not in st.session_state:
     st.session_state["symptoms_corrected"] = {}
-
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
     corrected = []
 
     for symptom in symptoms:
         symptom_lower = symptom.lower()
-        symptom_lower_corrected = corregir_sintomas(symptoms, available_symptoms_lower)
-        for i in range(len(symptom_lower_corrected)):
-            st.markdown(f"🔍 Síntoma '{symptom_lower_corrected[i]}")
-                
-            # Si el síntoma ya está en el dataset, se usa directamente
-        if symptom_lower_corrected in available_symptoms_lower:
-            corrected.append(available_symptoms_lower[symptom_lower])
-            st.markdown(f"🔍 Síntoma '{symptom_lower_corrected}' encontrado en el dataset.")
-        else:
-            st.markdown(f"🔍 Síntoma '{symptom_lower_corrected}' no encontrado en el dataset.")
-
-            # Si el usuario ya corrigió este síntoma, usar la opción guardada
-            if symptom_lower in st.session_state["symptoms_corrected"]:
-                corrected_symptom = st.session_state["symptoms_corrected"][symptom_lower]
-                corrected.append(corrected_symptom)
-            else:
-                # Buscar síntomas similares
-                closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
-
-                if closest_matches:
-                    # Mostrar opciones al usuario
-                    selected_option = st.radio(
-                        f"¿'{symptom}' no es un síntoma registrado, te referias a ...?", 
-                        [available_symptoms_lower[m] for m in closest_matches] + ["Ninguna de las anteriores"], 
-                        index=0,
-                        key=f"radio_{symptom_lower}"  # Clave única para evitar conflictos
-                    )
-
-                    if selected_option != "Ninguna de las anteriores":
-                        corrected.append(selected_option)
-                        st.session_state["symptoms_corrected"][symptom_lower] = selected_option  # Guardar selección del usuario
-                    else:
-                        corrected.append(symptom)  # Mantenerlo sin cambios si no hay corrección
-                else:
-                    st.warning(f"No se encontraron coincidencias para '{symptom}'.")
-                    corrected.append(symptom)  # Mantenerlo sin cambios si no hay sugerencias
+        symptom_lower_corrected = corregir_sintomas([symptom], available_symptoms_lower)  # Corregir el síntoma actual
         
+        # Verificar si el síntoma corregido está en el dataset
+        for corrected_symptom in symptom_lower_corrected:
+            st.markdown(f"🔍 Síntoma '{corrected_symptom}'")
             
+            if corrected_symptom.lower() in available_symptoms_lower:
+                corrected.append(available_symptoms_lower[corrected_symptom.lower()])
+                st.markdown(f"🔍 Síntoma '{corrected_symptom}' encontrado en el dataset.")
+            else:
+                st.markdown(f"🔍 Síntoma '{corrected_symptom}' no encontrado en el dataset.")
+
+                # Si el usuario ya corrigió este síntoma, usar la opción guardada
+                if symptom_lower in st.session_state["symptoms_corrected"]:
+                    corrected_symptom = st.session_state["symptoms_corrected"][symptom_lower]
+                    corrected.append(corrected_symptom)
+                else:
+                    # Buscar síntomas similares
+                    closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
+
+                    if closest_matches:
+                        # Mostrar opciones al usuario
+                        selected_option = st.radio(
+                            f"¿'{symptom}' no es un síntoma registrado, te referías a ...?", 
+                            [available_symptoms_lower[m] for m in closest_matches] + ["Ninguna de las anteriores"], 
+                            index=0,
+                            key=f"radio_{symptom_lower}"  # Clave única para evitar conflictos
+                        )
+
+                        if selected_option != "Ninguna de las anteriores":
+                            corrected.append(selected_option)
+                            st.session_state["symptoms_corrected"][symptom_lower] = selected_option  # Guardar selección del usuario
+                        else:
+                            corrected.append(symptom)  # Mantenerlo sin cambios si no hay corrección
+                    else:
+                        st.warning(f"No se encontraron coincidencias para '{symptom}'.")
+                        corrected.append(symptom)  # Mantenerlo sin cambios si no hay sugerencias
+    
     return corrected

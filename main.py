@@ -110,6 +110,7 @@ def predict_all_diseases_with_treatments(symptom_input):
     results = []
     for disease, probability in sorted_diseases:
         if probability >= 0.01:  # Umbral del 1%
+            df_treatments = st.session_state["df_treatments"]  # Recuperar desde la sesión
             treatment_row = df_treatments[df_treatments['name'] == disease]
             if not treatment_row.empty:
                 # Filtrar tratamientos eliminando columnas no relevantes

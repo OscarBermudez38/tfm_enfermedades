@@ -227,7 +227,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
                         if selected_option != "Ninguna de las anteriores":
                             #¿No deberia eliminar el sintoma antiguo?
                             if symptom_lower in symptom:
-                                del st.session_state["symptoms_corrected"][symptom_lower]
+                                del corrected[corrected.index(symptom)]
                                 corrected.append(selected_option)
                                 st.session_state["symptoms_corrected"][symptom_lower] = selected_option  # Guardar selección del usuario
                         else:

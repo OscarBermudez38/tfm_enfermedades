@@ -28,9 +28,9 @@ def cargar_modelo():
         X.columns = [col.lower() for col in X.columns]
 
         # Verificar la nueva dimensión de X
-        print(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
+        st.markdown(f"✅ Dataset de síntomas cargado. Columnas disponibles: {X.columns.tolist()}")
     except Exception as e:
-        print(f"⚠️ Error al cargar el modelo o los datos: {e}")
+        st.markdown(f"⚠️ Error al cargar el modelo o los datos: {e}")
         raise e
     
 def traducir_texto(texto, src="es", dest="en"):
@@ -38,10 +38,10 @@ def traducir_texto(texto, src="es", dest="en"):
     try:
         # Traducción síncrona
         translated = translator.translate(texto, src=src, dest=dest)
-        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
-        print(f"⚠️ Error al traducir: {e}")
+        st.markdown(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
 def traducir_sintomas(symptoms):
@@ -65,20 +65,20 @@ def corregir_sintomas(symptoms, available_symptoms):
     corrected = []
     
     for symptom in translated_symptoms:
-        print(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
+        st.markdown(f"🔍 Sintoma original: '{symptom}' -> Traducción: '{symptom}'")  # Imprime la traducción
         closest_match = difflib.get_close_matches(symptom.lower(), available_symptoms_lower.keys(), n=1, cutoff=0.5)
         
-        print(f"🔍 Closest match: {closest_match}")
+        st.markdown(f"🔍 Closest match: {closest_match}")
         
         if closest_match:
             corrected.append(available_symptoms_lower[closest_match[0]])  # Recupera el nombre original en inglés
         else:
-            print(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
+            st.markdown(f"⚠️ No se encontró coincidencia exacta para '{symptom}' -> Traducción: '{symptom}'")
     
     return corrected
 
 def predict_all_diseases_with_treatments(symptom_input):
-    print(f"\n🔍 Síntomas ingresados: {symptom_input}")
+    st.markdown(f"\n🔍 Síntomas ingresados: {symptom_input}")
     symptom_input = [symptom.lower() for symptom in symptom_input]
     
     # Asegurar que las columnas de X están en minúsculas
@@ -89,10 +89,10 @@ def predict_all_diseases_with_treatments(symptom_input):
     symptom_vector = symptom_vector[:, :model.input_shape[1]]  # Ajustar al tamaño correcto
     
     num_sintomas_activos = symptom_vector.sum()
-    print(f"✔️ Número de síntomas activos en el vector: {num_sintomas_activos}")
+    st.markdown(f"✔️ Número de síntomas activos en el vector: {num_sintomas_activos}")
 
     if num_sintomas_activos == 0:
-        print("⚠️ No se encontraron síntomas en el dataset. Revisa los síntomas ingresados.")
+        st.markdown("⚠️ No se encontraron síntomas en el dataset. Revisa los síntomas ingresados.")
         return []
     
     # Hacer la predicción
@@ -117,7 +117,7 @@ def predict_all_diseases_with_treatments(symptom_input):
 
 
 def iniciar_chatbot():
-    print("Hola, soy tu asistente médico. Voy a preguntarte sobre tus síntomas.")
+    st.markdown("Hola, soy tu asistente médico. Voy a preguntarte sobre tus síntomas.")
     symptoms = []
     while True:
         symptom = input("Menciona un síntoma que tengas (o escribe 'listo' para terminar): ")
@@ -126,26 +126,26 @@ def iniciar_chatbot():
         symptoms.append(symptom)
     
     if not symptoms:
-        print("No ingresaste ningún síntoma. Inténtalo de nuevo.")
+        st.markdown("No ingresaste ningún síntoma. Inténtalo de nuevo.")
         return
     
-    print("\nAnalizando síntomas...")
+    st.markdown("\nAnalizando síntomas...")
     corrected_symptoms = corregir_sintomas(symptoms, X.columns)
-    print(f"Síntomas corregidos: {corrected_symptoms}")
+    st.markdown(f"Síntomas corregidos: {corrected_symptoms}")
     
     resultados = predict_all_diseases_with_treatments(corrected_symptoms)
     if not resultados:
-        print("No encontré enfermedades relacionadas con estos síntomas.")
+        st.markdown("No encontré enfermedades relacionadas con estos síntomas.")
         return
     
     enfermedad, probabilidad, tratamientos = resultados[0]
-    print(f"\nSegún los síntomas proporcionados, podrías tener {enfermedad} con una probabilidad del {probabilidad*100:.2f}%.")
+    st.markdown(f"\nSegún los síntomas proporcionados, podrías tener {enfermedad} con una probabilidad del {probabilidad*100:.2f}%.")
     if tratamientos:
-        print("Posibles tratamientos:")
+        st.markdown("Posibles tratamientos:")
         for tratamiento in tratamientos:
-            print(f"- {tratamiento}")
+            st.markdown(f"- {tratamiento}")
     else:
-        print("No hay tratamientos disponibles en la base de datos.")
+        st.markdown("No hay tratamientos disponibles en la base de datos.")
     
 if __name__ == "__main__":
     cargar_modelo()

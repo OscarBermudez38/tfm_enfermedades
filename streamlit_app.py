@@ -104,7 +104,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = corregir_sintomas([symptom], available_symptoms_lower)  # Corregir el síntoma actual
-        symptom_lower = symptom.lower()
+        symptom_lower = symptom_lower.lower()
         st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower}'")
 
         if symptom_lower in available_symptoms_lower:

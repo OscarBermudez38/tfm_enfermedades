@@ -59,10 +59,10 @@ def traducir_texto(texto, src="es", dest="en"):
     try:
         # Traducción síncrona
         translated = translator.translate(texto, src=src, dest=dest)
-        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
-        st.markdown(f"⚠️ Error al traducir: {e}")
+        print(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
 def traducir_sintomas(symptoms):
@@ -93,9 +93,9 @@ def corregir_sintomas(symptoms, available_symptoms):
             else:
                 corrected.append(symptom)
     else:
-        st.markdown(f"⚠️ No se encontraron síntomas traducidos.")
+        print(f"⚠️ No se encontraron síntomas traducidos.")
         
-    st.markdown(f"🔍 Síntomas corregidos: {corrected}")
+    print(f"🔍 Síntomas corregidos: {corrected}")
     return corrected
 
 if "symptoms_corrected" not in st.session_state:
@@ -108,7 +108,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
     for symptom in symptoms:
         symptom_lower = symptom.lower()
         symptom_lower_corrected = corregir_sintomas([symptom], available_symptoms)  # Corregir el síntoma actual
-        st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_corrected}'")
+        print(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_corrected}'")
 
         if symptom_lower_corrected[0] in available_symptoms_lower:
             st.session_state["symptoms_corrected"][symptom_lower_corrected[0]] = available_symptoms_lower[symptom_lower_corrected[0]]

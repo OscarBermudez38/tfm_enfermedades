@@ -76,22 +76,46 @@ def traducir_sintomas(symptoms):
     
     return translated_symptoms  # Devuelve una lista de síntomas traducidos
 
+
+# Función para corregir los síntomas
+def corregir_sintomas(symptoms, available_symptoms):
+    """Traduce y corrige los síntomas según la lista disponible en inglés."""
+    # Traducir los síntomas primero
+    translated_symptoms = traducir_sintomas(symptoms)
+    translated_symptoms = {s.lower(): s for s in translated_symptoms}
+    available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
+    corrected = []
+    
+    if translated_symptoms:
+        for symptom in translated_symptoms:
+            if symptom in available_symptoms_lower:
+                corrected.append(available_symptoms_lower[symptom])  # Recupera el nombre original en inglés
+            else:
+                corrected.append(symptom)
+    else:
+        st.markdown(f"⚠️ No se encontraron síntomas traducidos.")
+        
+    st.markdown(f"🔍 Síntomas corregidos: {corrected}")
+    return corrected
+
+if "symptoms_corrected" not in st.session_state:
+    st.session_state["symptoms_corrected"] = {}
 # Función para sugerir síntomas y manejar términos desconocidos
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}
     pending = {}
 
     for symptom in symptoms:
-        symptom_lower = traducir_sintomas([symptom])  # Corregir el síntoma actual
-        symptom_lower_translate = str(symptom_lower.lower())
-        st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_translate}'")
+        symptom_lower = symptom.lower()
+        symptom_lower_corrected = corregir_sintomas([symptom], available_symptoms)  # Corregir el síntoma actual
+        st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_corrected}'")
 
-        if symptom_lower_translate in available_symptoms_lower:
-            st.session_state["symptoms_corrected"][symptom_lower_translate] = available_symptoms_lower[symptom_lower_translate]
-        elif symptom_lower_translate in st.session_state["symptoms_corrected"]:
+        if symptom_lower_corrected in available_symptoms_lower:
+            st.session_state["symptoms_corrected"][symptom_lower_corrected] = available_symptoms_lower[symptom_lower_corrected]
+        elif symptom_lower_corrected in st.session_state["symptoms_corrected"]:
             continue  
         else:
-            closest_matches = difflib.get_close_matches(symptom_lower_translate, available_symptoms_lower.keys(), n=3, cutoff=0.4)
+            closest_matches = difflib.get_close_matches(symptom_lower_corrected, available_symptoms_lower.keys(), n=3, cutoff=0.4)
             if closest_matches:
                 pending[symptom_lower] = closest_matches
             else:

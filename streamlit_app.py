@@ -110,16 +110,12 @@ def sugerir_sintomas(symptoms, available_symptoms):
         symptom_lower_corrected = corregir_sintomas([symptom], available_symptoms)  # Corregir el síntoma actual
         st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_corrected}'")
 
-        if isinstance(symptom_lower_corrected, list) and len(symptom_lower_corrected) > 0 and isinstance(symptom_lower_corrected[0], list):
-            symptom_lower_corrected = [item for sublist in symptom_lower_corrected for item in sublist]
-        
-        st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_corrected}'")
-        if symptom_lower_corrected in available_symptoms_lower:
-            st.session_state["symptoms_corrected"][symptom_lower_corrected] = available_symptoms_lower[symptom_lower_corrected]
-        elif symptom_lower_corrected in st.session_state["symptoms_corrected"]:
+        if symptom_lower_corrected[0] in available_symptoms_lower:
+            st.session_state["symptoms_corrected"][symptom_lower_corrected[0]] = available_symptoms_lower[symptom_lower_corrected[0]]
+        elif symptom_lower_corrected[0] in st.session_state["symptoms_corrected"]:
             continue  
         else:
-            closest_matches = difflib.get_close_matches(symptom_lower_corrected, available_symptoms_lower.keys(), n=3, cutoff=0.4)
+            closest_matches = difflib.get_close_matches(symptom_lower_corrected[0], available_symptoms_lower.keys(), n=3, cutoff=0.4)
             if closest_matches:
                 pending[symptom_lower] = closest_matches
             else:

@@ -110,6 +110,10 @@ def sugerir_sintomas(symptoms, available_symptoms):
         symptom_lower_corrected = corregir_sintomas([symptom], available_symptoms)  # Corregir el síntoma actual
         st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_corrected}'")
 
+        if isinstance(symptom_lower_corrected, list) and len(symptom_lower_corrected) > 0 and isinstance(symptom_lower_corrected[0], list):
+            symptom_lower_corrected = [item for sublist in symptom_lower_corrected for item in sublist]
+        
+        st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_corrected}'")
         if symptom_lower_corrected in available_symptoms_lower:
             st.session_state["symptoms_corrected"][symptom_lower_corrected] = available_symptoms_lower[symptom_lower_corrected]
         elif symptom_lower_corrected in st.session_state["symptoms_corrected"]:

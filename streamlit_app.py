@@ -74,7 +74,6 @@ def traducir_sintomas(symptoms):
         if translated_symptom:  # Asegurarse de que no sea None
             translated_symptoms.append(translated_symptom)
     
-    translated_symptoms = {s.lower(): s for s in translated_symptoms}    
     return translated_symptoms  # Devuelve una lista de síntomas traducidos
 
 # Función para sugerir síntomas y manejar términos desconocidos

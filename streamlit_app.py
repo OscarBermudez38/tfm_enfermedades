@@ -83,9 +83,8 @@ def sugerir_sintomas(symptoms, available_symptoms):
     pending = {}
 
     for symptom in symptoms:
-        symptom_lower = symptom.lower()
-        symptom_lower = traducir_sintomas([symptom_lower])  # Corregir el síntoma actual
-        symptom_lower= symptom_lower.lower()
+        symptom_lower = traducir_sintomas([symptom])  # Corregir el síntoma actual
+        symptom_lower = {s.lower(): s for s in symptom_lower}  
         st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower}'")
 
         if symptom_lower in available_symptoms_lower:

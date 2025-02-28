@@ -74,39 +74,17 @@ def traducir_sintomas(symptoms):
         if translated_symptom:  # Asegurarse de que no sea None
             translated_symptoms.append(translated_symptom)
     
+    translated_symptoms = {s.lower(): s for s in translated_symptoms}    
     return translated_symptoms  # Devuelve una lista de síntomas traducidos
-
-# Función para corregir los síntomas
-def corregir_sintomas(symptoms, available_symptoms):
-    """Traduce y corrige los síntomas según la lista disponible en inglés."""
-    # Traducir los síntomas primero
-    translated_symptoms = traducir_sintomas(symptoms)
-    translated_symptoms = {s.lower(): s for s in translated_symptoms}
-    available_symptoms_lower = {s.lower(): s for s in available_symptoms}  # Diccionario en minúsculas
-    corrected = []
-    
-    if translated_symptoms:
-        for symptom in translated_symptoms:
-            if symptom in available_symptoms_lower:
-                corrected.append(available_symptoms_lower[symptom])  # Recupera el nombre original en inglés
-            else:
-                corrected.append(symptom)
-    else:
-        st.markdown(f"⚠️ No se encontraron síntomas traducidos.")
-        
-    st.markdown(f"🔍 Síntomas corregidos: {corrected}")
-    return corrected
 
 # Función para sugerir síntomas y manejar términos desconocidos
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}
     pending = {}
-    symptom_lower = []
-    for symptom in symptoms:
-        symptom_lower = symptom
-        symptom_lower = corregir_sintomas([symptom], available_symptoms_lower)  # Corregir el síntoma actual
-        symptom_lower = symptom.lower()
 
+    for symptom in symptoms:
+        symptom_lower = symptom.lower()
+        symptom_lower = traducir_sintomas([symptom], available_symptoms_lower)  # Corregir el síntoma actual
 
         st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower}'")
 

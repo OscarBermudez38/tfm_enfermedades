@@ -101,10 +101,12 @@ def corregir_sintomas(symptoms, available_symptoms):
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}
     pending = {}
-
+    symptom_lower = []
     for symptom in symptoms:
         symptom_lower = symptom
-        symptom_lower = corregir_sintomas([symptom], available_symptoms_lower).lower()  # Corregir el síntoma actual
+        symptom_lower = corregir_sintomas([symptom], available_symptoms_lower)  # Corregir el síntoma actual
+        symptom_lower = symptom.lower()
+
 
         st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower}'")
 

@@ -191,7 +191,18 @@ mensaje_placeholder.write("Ingresa tus síntomas para obtener un diagnóstico ba
 # Input de síntomas
 symptoms_input = st.text_input("Escribe los síntomas separados por comas", key="symptoms_input").lower()
 
-#
+
+
+# Si no hay correcciones pendientes, analizar directamente
+if st.button("Analizar síntomas", key="predict_button"):
+    symptoms = [s.strip() for s in symptoms_input.split(",") if s.strip()]
+    sugerir_sintomas(symptoms, st.session_state["X"].columns)
+
+    if not st.session_state["pending_corrections"]:
+        st.session_state["disease_predictions"] = predict_diseases(symptoms)
+        st.rerun()
+
+# Mostrar resultados si ya se generaron
 if st.session_state["disease_predictions"]:
     disease_predictions = st.session_state["disease_predictions"]
     st.subheader("Resultados del Modelo de IA:")

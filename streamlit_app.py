@@ -83,7 +83,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = traducir_sintomas([symptom])  # Corregir el síntoma actual
-        
+        symptom_lower = symptom_lower.lower()  # Acceder al primer elemento y convertir a minúsculas
         
         st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower}'")
 

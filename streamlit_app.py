@@ -191,10 +191,26 @@ mensaje_placeholder.write("Ingresa tus síntomas para obtener un diagnóstico ba
 # Input de síntomas
 symptoms_input = st.text_input("Escribe los síntomas separados por comas", key="symptoms_input").lower()
 
+# Si hay correcciones pendientes, mostrar opciones y ocultar botón de análisis
+if st.session_state["pending_corrections"]:
+    st.subheader("Confirma los síntomas corregidos antes de continuar")
+    for symptom, options in st.session_state["pending_corrections"].items():
+        selected_option = st.radio(
+            f"¿'{symptom}' no es un síntoma registrado, te referías a...?",
+            options + ["Ninguna de las anteriores"],
+            index=0,
+            key=f"radio_{symptom}"
+        )
+        st.session_state["symptoms_corrected"][symptom] = selected_option if selected_option != "Ninguna de las anteriores" else symptom
 
+    if st.button("Confirmar selección"):
+        st.session_state["pending_corrections"] = {}  
+        corrected_symptoms = list(st.session_state["symptoms_corrected"].values())
+        st.session_state["disease_predictions"] = predict_diseases(corrected_symptoms)
+        st.rerun()
 
 # Si no hay correcciones pendientes, analizar directamente
-if st.button("Analizar síntomas", key="predict_button"):
+elif st.button("Analizar síntomas", key="predict_button"):
     symptoms = [s.strip() for s in symptoms_input.split(",") if s.strip()]
     sugerir_sintomas(symptoms, st.session_state["X"].columns)
 

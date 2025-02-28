@@ -83,15 +83,15 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = traducir_sintomas([symptom])  # Corregir el síntoma actual
-        symptom_lower = symptom_lower.lower()
-        st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower}'")
+        symptom_lower_translate = str(symptom_lower.lower())
+        st.markdown(f"🔍 Corrigiendo '{symptom}' a '{symptom_lower_translate}'")
 
-        if symptom_lower in available_symptoms_lower:
-            st.session_state["symptoms_corrected"][symptom_lower] = available_symptoms_lower[symptom_lower]
-        elif symptom_lower in st.session_state["symptoms_corrected"]:
+        if symptom_lower_translate in available_symptoms_lower:
+            st.session_state["symptoms_corrected"][symptom_lower_translate] = available_symptoms_lower[symptom_lower_translate]
+        elif symptom_lower_translate in st.session_state["symptoms_corrected"]:
             continue  
         else:
-            closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
+            closest_matches = difflib.get_close_matches(symptom_lower_translate, available_symptoms_lower.keys(), n=3, cutoff=0.4)
             if closest_matches:
                 pending[symptom_lower] = closest_matches
             else:

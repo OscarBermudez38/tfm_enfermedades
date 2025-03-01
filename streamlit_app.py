@@ -91,7 +91,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     if pending:
         st.session_state["pending_corrections"] = pending
-        #st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
+        st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
     return all_simptoms
 
 # Función para predecir enfermedades
@@ -107,12 +107,13 @@ def predict_diseases(symptom_input):
 
 
     if symptom_vector.sum() == 0:
+        st.markdown(f"vector_sum {symptom_vector.sum()}")
         return []
 
     probabilities = model.predict(symptom_vector)[0]
     disease_probabilities = {mlb.classes_[i]: prob for i, prob in enumerate(probabilities)}
     sorted_diseases = sorted(disease_probabilities.items(), key=lambda x: x[1], reverse=True)
-
+    st.markdown(f"sorted_diseases: {sorted_diseases}")
     results = []
     for disease, prob in sorted_diseases:
         if prob >= 0.01:
@@ -178,7 +179,7 @@ if st.session_state["pending_corrections"]:
     if st.button("Confirmar selección"):
         st.session_state["pending_corrections"] = {} 
         corrected_symptoms = list(st.session_state["symptoms_corrected"].values())
-        st.markdown(f"sintomas correfidos {corrected_symptoms}")
+        st.markdown(f"sintomas corregidos {corrected_symptoms}")
         st.session_state["disease_predictions"] = predict_diseases(corrected_symptoms)
         #st.rerun()
 

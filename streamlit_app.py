@@ -167,7 +167,7 @@ titulo_placeholder = st.empty()  # Espacio reservado para el título
 titulo_placeholder.title("Asistente Médico IA con ChatGPT")
 mensaje_placeholder = st.empty()  # Espacio reservado para evitar duplicación
 mensaje_placeholder.write("Ingresa tus síntomas para obtener un diagnóstico basado en un modelo de IA y una explicación de un chatbot médico.")
-
+opciones = []
 # Input de síntomas
 symptoms_input = st.text_input("Escribe los síntomas separados por comas", key="symptoms_input").lower()
 
@@ -176,10 +176,10 @@ if st.session_state["pending_corrections"]:
     st.subheader("Confirma los síntomas corregidos antes de continuar")
     for symptom, options in st.session_state["pending_corrections"].items():
         for option in options:
-            options[options.index(option)] = traducir_texto(option, src="en", dest="es")
+            opciones = traducir_texto(option, src="en", dest="es")
         selected_option = st.radio(
             f"¿{symptom}' no es un síntoma registrado, te referías a...?",
-            options + ["Ninguna de las anteriores"],
+            opciones + ["Ninguna de las anteriores"],
             index=0,
             key=f"radio_{symptom}"
         )

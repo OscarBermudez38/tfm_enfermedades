@@ -68,23 +68,24 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = symptom.lower()
-        st.write(f"Procesando síntoma: {symptom_lower}")  # Depuración
-        symptom_lower = traducir_texto(symptom_lower)  # Corregir el síntoma actual
-
+        st.markdown(f" sintoma {symptom}")
+        symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
+        st.write(f"¿Está 'anxiety' en el dataset? {'anxiety' in available_symptoms_lower}")  # Depuración
         if symptom_lower in available_symptoms_lower:
             st.session_state["symptoms_corrected"][symptom_lower] = available_symptoms_lower[symptom_lower]
         elif symptom_lower in st.session_state["symptoms_corrected"]:
-            continue
+            continue  
         else:
             closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
             if closest_matches:
                 pending[symptom_lower] = closest_matches
             else:
                 st.warning(f"El síntoma '{symptom}' no está registrado y no se encontraron coincidencias.")
-                st.session_state["symptoms_corrected"][symptom_lower] = symptom
+                st.session_state["symptoms_corrected"][symptom_lower] = symptom  
 
     if pending:
         st.session_state["pending_corrections"] = pending
+        #st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
 
 # Función para predecir enfermedades
 def predict_diseases(symptom_input):

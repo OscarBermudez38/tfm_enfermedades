@@ -97,21 +97,13 @@ def sugerir_sintomas(symptoms, available_symptoms):
 # Función para predecir enfermedades
 def predict_diseases(symptom_input):
     df_treatments = st.session_state["df_treatments"]
-    symptom_input = [symptom.lower() for symptom in symptom_input]
+    symptom_input = [symptom.lower() for symptoms_sugeridos in symptom_input]
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]
 
-    for symptom in symptom_input:
-    # Buscar la columna que coincide exactamente con el síntoma
-        matching_column = next((col for col in X.columns if col == symptom), None)
-    
-        if matching_column:
-            st.markdown(f"✅ El síntoma '{symptom}' coincide con la columna: **'{matching_column}'**")
-        else:
-            st.markdown(f"❌ El síntoma '{symptom}' NO coincide con ninguna columna del dataset.")
 
-    symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
+    symptom_vector = np.array([[1 if symptoms_sugeridos in symptom_input else 0 for symptoms_sugeridos in X.columns]])
     symptom_vector = symptom_vector[:, :model.input_shape[1]]
 
     if symptom_vector.sum() == 0:

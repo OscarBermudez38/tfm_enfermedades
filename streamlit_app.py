@@ -97,23 +97,21 @@ def sugerir_sintomas(symptoms, available_symptoms):
 # Función para predecir enfermedades
 def predict_diseases(symptom_input):
     df_treatments = st.session_state["df_treatments"]
+    symptom_input = [symptom.lower() for symptom in symptom_input]
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]
-    st.markdown(f"Antes de vector {symptom_input}")
+
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
     symptom_vector = symptom_vector[:, :model.input_shape[1]]
-    st.markdown(f"despues de vector {symptom_input}")
-
 
     if symptom_vector.sum() == 0:
-        st.markdown(f"vector_sum {symptom_vector.sum()}")
         return []
 
     probabilities = model.predict(symptom_vector)[0]
     disease_probabilities = {mlb.classes_[i]: prob for i, prob in enumerate(probabilities)}
     sorted_diseases = sorted(disease_probabilities.items(), key=lambda x: x[1], reverse=True)
-    st.markdown(f"sorted_diseases: {sorted_diseases}")
+
     results = []
     for disease, prob in sorted_diseases:
         if prob >= 0.01:

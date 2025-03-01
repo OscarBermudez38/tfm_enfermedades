@@ -55,10 +55,10 @@ def traducir_texto(texto, src="es", dest="en"):
     try:
         # Traducción síncrona
         translated = translator.translate(texto, src=src, dest=dest)
-        printkdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
-        printkdown(f"⚠️ Error al traducir: {e}")
+        print(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
 # Función para sugerir síntomas y manejar términos desconocidos
@@ -68,10 +68,10 @@ def sugerir_sintomas(symptoms, available_symptoms):
     all_simptoms = []
 
     for symptom in symptoms:
-        printkdown(f" sintoma {symptom}")
+        print(f" sintoma {symptom}")
         symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
         symptom_lower = symptom_lower.lower()
-        printkdown(f"minuscula:{symptom_lower}")
+        print(f"minuscula:{symptom_lower}")
 
         if symptom_lower in available_symptoms_lower:        
             st.session_state["symptoms_corrected"][symptom_lower] = available_symptoms_lower[symptom_lower]
@@ -180,7 +180,7 @@ if st.session_state["pending_corrections"]:
     if st.button("Confirmar selección"):
         st.session_state["pending_corrections"] = {} 
         corrected_symptoms = list(st.session_state["symptoms_corrected"].values())
-        printkdown(f"sintomas corregidos {corrected_symptoms}")
+        print(f"sintomas corregidos {corrected_symptoms}")
         st.session_state["disease_predictions"] = predict_diseases(corrected_symptoms)
         st.rerun()
 
@@ -188,10 +188,10 @@ if st.session_state["pending_corrections"]:
 elif st.button("Analizar síntomas", key="predict_button"):
     symptoms_sugeridos = []
     symptoms = [s.strip() for s in symptoms_input.split(",") if s.strip()]
-    printkdown(f"antes de sugerir: {symptoms}")
+    print(f"antes de sugerir: {symptoms}")
 
     symptoms_sugeridos = sugerir_sintomas(symptoms, st.session_state["X"].columns)
-    printkdown(f"dsp de sugerir: {symptoms_sugeridos}")
+    print(f"dsp de sugerir: {symptoms_sugeridos}")
 
     if not st.session_state["pending_corrections"]:
         st.session_state["disease_predictions"] = predict_diseases(symptoms_sugeridos)

@@ -86,7 +86,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
     if pending:
         st.session_state["pending_corrections"] = pending
         st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
-
+    return symptom_lower
 # Función para predecir enfermedades
 def predict_diseases(symptom_input):
     df_treatments = st.session_state["df_treatments"]

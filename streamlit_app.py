@@ -185,7 +185,7 @@ elif st.button("Analizar síntomas", key="predict_button"):
     st.markdown(f"antes de sugerir: {symptoms}")
 
     symptoms_sugeridos = sugerir_sintomas(symptoms, st.session_state["X"].columns)
-    st.markdown(f"dsp de sugerir: {symptoms}")
+    st.markdown(f"dsp de sugerir: {symptoms_sugeridos}")
 
     if not st.session_state["pending_corrections"]:
         st.markdown(f"sintomas: {symptoms}")

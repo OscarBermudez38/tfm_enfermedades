@@ -178,6 +178,7 @@ if st.session_state["pending_corrections"]:
     if st.button("Confirmar selección"):
         st.session_state["pending_corrections"] = {} 
         corrected_symptoms = list(st.session_state["symptoms_corrected"].values())
+        st.markdown(f"sintomas correfidos {corrected_symptoms}")
         st.session_state["disease_predictions"] = predict_diseases(corrected_symptoms)
         st.rerun()
 

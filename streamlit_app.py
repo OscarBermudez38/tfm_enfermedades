@@ -98,8 +98,6 @@ def sugerir_sintomas(symptoms, available_symptoms):
 def predict_diseases(symptom_input):
     df_treatments = st.session_state["df_treatments"]
 
-    symptom_input = [symptom.lower() for symptom in symptom_input]
-
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]

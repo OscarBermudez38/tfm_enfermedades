@@ -72,9 +72,6 @@ def sugerir_sintomas(symptoms, available_symptoms):
         symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
         
         if symptom_lower in available_symptoms_lower:        
-            st.write(f"¿Está 'anxiety' en el dataset? {'anxiety' in available_symptoms_lower}")  # Depuración
-
-
             st.session_state["symptoms_corrected"][symptom_lower] = available_symptoms_lower[symptom_lower]
         elif symptom_lower in st.session_state["symptoms_corrected"]:
             continue  
@@ -171,7 +168,8 @@ if st.session_state["pending_corrections"]:
         st.session_state["symptoms_corrected"][symptom] = selected_option if selected_option != "Ninguna de las anteriores" else symptom
 
     if st.button("Confirmar selección"):
-        st.session_state["pending_corrections"] = {}  
+        st.session_state["pending_corrections"] = {} 
+        st.markdown(f"sintoma:{st.session_state["symptoms_corrected"].values()}")
         corrected_symptoms = list(st.session_state["symptoms_corrected"].values())
         st.session_state["disease_predictions"] = predict_diseases(corrected_symptoms)
         #st.rerun()

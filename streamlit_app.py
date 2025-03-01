@@ -110,6 +110,8 @@ def predict_diseases(symptom_input):
     if symptom_vector.sum() == 0:
         return []
 
+    st.markdown(f"vector: {symptom_vector}")
+
     probabilities = model.predict(symptom_vector)[0]
     disease_probabilities = {mlb.classes_[i]: prob for i, prob in enumerate(probabilities)}
     sorted_diseases = sorted(disease_probabilities.items(), key=lambda x: x[1], reverse=True)

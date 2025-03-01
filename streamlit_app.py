@@ -70,8 +70,11 @@ def sugerir_sintomas(symptoms, available_symptoms):
         symptom_lower = symptom.lower()
         st.markdown(f" sintoma {symptom}")
         symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
-        st.write(f"¿Está 'anxiety' en el dataset? {'anxiety' in available_symptoms_lower}")  # Depuración
-        if symptom_lower in available_symptoms_lower:
+        
+        if symptom_lower in available_symptoms_lower:        
+        t.write(f"¿Está 'anxiety' en el dataset? {'anxiety' in available_symptoms_lower}")  # Depuración
+
+
             st.session_state["symptoms_corrected"][symptom_lower] = available_symptoms_lower[symptom_lower]
         elif symptom_lower in st.session_state["symptoms_corrected"]:
             continue  

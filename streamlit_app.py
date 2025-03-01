@@ -183,6 +183,7 @@ if st.session_state["pending_corrections"]:
             index=0,
             key=f"radio_{symptom}"
         )
+        opciones = []
         st.session_state["symptoms_corrected"][symptom] = selected_option if selected_option != "Ninguna de las anteriores" else symptom
 
     if st.button("Confirmar selección"):

@@ -48,17 +48,6 @@ if "pending_corrections" not in st.session_state:
 if "disease_predictions" not in st.session_state:
     st.session_state["disease_predictions"] = None
 
-def traducir_texto(texto, src="es", dest="en"):
-    """Traduce el texto siempre de español a inglés de manera síncrona."""
-    try:
-        # Traducción síncrona
-        translated = translator.translate(texto, src=src, dest=dest)
-        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
-        return translated.text  # Accede al texto traducido
-    except Exception as e:
-        st.markdown(f"⚠️ Error al traducir: {e}")
-        return texto  # Si hay error, retorna el texto original
-
 # Función para sugerir síntomas y manejar términos desconocidos
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}

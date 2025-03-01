@@ -127,10 +127,6 @@ def predict_diseases(symptom_input):
     # Depuración: Verificar el symptom_vector
     st.write("Symptom vector:", symptom_vector)
 
-    # Obtener las columnas con valor 1
-    columnas_con_uno = [col for col, val in zip(X.columns, symptom_vector[0]) if val == 1]
-    st.markdown(f"Columnas con valor 1: {', '.join(columnas_con_uno)}")
-
     # Si no hay síntomas válidos, retornar una lista vacía
     if symptom_vector.sum() == 0:
         st.warning("No se encontraron síntomas válidos en el modelo.")

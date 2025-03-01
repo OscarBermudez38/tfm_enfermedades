@@ -110,7 +110,11 @@ def predict_diseases(symptom_input):
     if symptom_vector.sum() == 0:
         return []
 
-    st.markdown(f"vector: {symptom_vector}")
+    # Obtener los nombres de las columnas donde hay un 1
+    columnas_con_uno = [col for col, val in zip(X.columns, symptom_vector[0]) if val == 1]
+
+    # Mostrar las columnas con un 1
+    st.markdown(f"Columnas con valor 1: {', '.join(columnas_con_uno)}")
 
     probabilities = model.predict(symptom_vector)[0]
     disease_probabilities = {mlb.classes_[i]: prob for i, prob in enumerate(probabilities)}

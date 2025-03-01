@@ -61,18 +61,6 @@ def traducir_texto(texto, src="es", dest="en"):
         st.markdown(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
-def traducir_sintomas(symptoms):
-    """Traduce una lista de síntomas de español a inglés."""
-    translated_symptoms = []
-    for symptom in symptoms:
-        # Llamamos a la función para traducir cada síntoma
-        translated_symptom = traducir_texto(symptom)  # Llamada sincrónica
-        if translated_symptom:  # Asegurarse de que no sea None
-            translated_symptoms.append(translated_symptom)
-    
-    return translated_symptoms  # Devuelve una lista de síntomas traducidos
-
-
 # Función para sugerir síntomas y manejar términos desconocidos
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}
@@ -81,7 +69,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
     for symptom in symptoms:
         symptom_lower = symptom.lower()
         st.markdown(f" sintoma {symptom}")
-        symptom_lower = corregir_sintomas([symptom])  # Corregir el síntoma actual
+        symptom_lower = traducir_texto(symptom)  # Corregir el síntoma actual
 
         if symptom_lower[0] in available_symptoms_lower:
             st.session_state["symptoms_corrected"][symptom_lower[0]] = available_symptoms_lower[symptom_lower[0]]

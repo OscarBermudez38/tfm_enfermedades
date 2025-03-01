@@ -177,12 +177,16 @@ if st.session_state["pending_corrections"]:
 elif st.button("Analizar síntomas", key="predict_button"):
 
     symptoms = [s.strip() for s in symptoms_input.split(",") if s.strip()]
+    st.markdown(f"antes de sugerir: {symptoms}")
+
     symptoms = sugerir_sintomas(symptoms, st.session_state["X"].columns)
+    st.markdown(f"dsp de sugerir: {symptoms}")
+
     symptoms.lower()
     if not st.session_state["pending_corrections"]:
         st.markdown(f"sintomas: {symptoms}")
         st.session_state["disease_predictions"] = predict_diseases(symptoms)
-        st.rerun()
+        #st.rerun()
 
 # Mostrar resultados si ya se generaron
 if st.session_state["disease_predictions"]:

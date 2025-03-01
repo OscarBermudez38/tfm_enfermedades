@@ -69,8 +69,8 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         st.markdown(f" sintoma {symptom}")
-        #symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
-        symptom_lower = symptom.lower()
+        symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
+        symptom_lower = symptom_lower.lower()
         st.markdown(f"minuscula:{symptom_lower}")
 
         if symptom_lower in available_symptoms_lower:        
@@ -101,7 +101,7 @@ def predict_diseases(symptom_input):
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]
-
+    X.columns = [col.lower().strip() for col in X.columns]
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
     symptom_vector = symptom_vector[:, :model.input_shape[1]]
 

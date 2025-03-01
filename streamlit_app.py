@@ -85,7 +85,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     if pending:
         st.session_state["pending_corrections"] = pending
-        st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
+        #st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
     return symptom_lower
 # Función para predecir enfermedades
 def predict_diseases(symptom_input):
@@ -184,12 +184,8 @@ elif st.button("Analizar síntomas", key="predict_button"):
 
     symptoms = sugerir_sintomas(symptoms, st.session_state["X"].columns)
     st.markdown(f"dsp de sugerir: {symptoms}")
-    
-    if isinstance(symptom_input, list) and len(symptom_input) > 1:
-    # Si hay más de un síntoma, convierte cada uno a minúsculas
-        symptom_input = [symptom.lower() for symptom in symptom_input]
-    else:
-        symptoms.lower()
+
+    symptoms.lower()
 
     if not st.session_state["pending_corrections"]:
         st.markdown(f"sintomas: {symptoms}")

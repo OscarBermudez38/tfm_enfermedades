@@ -69,7 +69,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
     for symptom in symptoms:
         symptom_lower = symptom.lower()
         st.markdown(f" sintoma {symptom}")
-        symptom_lower = traducir_texto(symptom)  # Corregir el síntoma actual
+        symptom_lower = traducir_texto([symptom])  # Corregir el síntoma actual
 
         if symptom_lower[0] in available_symptoms_lower:
             st.session_state["symptoms_corrected"][symptom_lower[0]] = available_symptoms_lower[symptom_lower[0]]

@@ -176,7 +176,7 @@ if st.session_state["pending_corrections"]:
     st.subheader("Confirma los síntomas corregidos antes de continuar")
     for symptom, options in st.session_state["pending_corrections"].items():
         for option in options:
-            opciones = traducir_texto(option, src="en", dest="es")
+            opciones.append(traducir_texto(option, src="en", dest="es"))  # Agrega a la lista
         selected_option = st.radio(
             f"¿{symptom}' no es un síntoma registrado, te referías a...?",
             opciones + ["Ninguna de las anteriores"],

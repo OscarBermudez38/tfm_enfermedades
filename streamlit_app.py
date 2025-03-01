@@ -184,8 +184,13 @@ elif st.button("Analizar síntomas", key="predict_button"):
 
     symptoms = sugerir_sintomas(symptoms, st.session_state["X"].columns)
     st.markdown(f"dsp de sugerir: {symptoms}")
+    
+    if isinstance(symptom_input, list) and len(symptom_input) > 1:
+    # Si hay más de un síntoma, convierte cada uno a minúsculas
+        symptom_input = [symptom.lower() for symptom in symptom_input]
+    else:
+        symptoms.lower()
 
-    symptoms.lower()
     if not st.session_state["pending_corrections"]:
         st.markdown(f"sintomas: {symptoms}")
         st.session_state["disease_predictions"] = predict_diseases(symptoms)

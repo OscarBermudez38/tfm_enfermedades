@@ -118,11 +118,11 @@ def predict_diseases(symptom_input):
     X.columns = [col.strip().lower() for col in X.columns]
 
     # Depuración: Verificar síntomas y columnas
-    st.write("Síntomas en symptom_input:", symptom_input)
+    st.write("Síntomas ingresados:", symptom_input)
     st.write("Columnas de X:", X.columns)
 
     # Crear el symptom_vector
-    symptom_vector = np.array([[1 if symptom in X.columns else 0 for symptom in symptom_input]])
+    symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
 
     # Depuración: Verificar el symptom_vector
     st.write("Symptom vector:", symptom_vector)

@@ -101,7 +101,12 @@ def predict_diseases(symptom_input):
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]
-    X.columns = [col.lower().strip() for col in X.columns]
+
+    for symptom in symptom_input:
+        
+        if symptom in X.columns:
+            st.markdown(f"{symptom} - columnas {X.columns}")
+
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
     symptom_vector = symptom_vector[:, :model.input_shape[1]]
 

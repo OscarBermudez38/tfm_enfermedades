@@ -180,7 +180,7 @@ if st.session_state["pending_corrections"]:
 
 # Si no hay correcciones pendientes, analizar directamente
 elif st.button("Analizar síntomas", key="predict_button"):
-
+    symptoms_sugeridos = []
     symptoms = [s.strip() for s in symptoms_input.split(",") if s.strip()]
     st.markdown(f"antes de sugerir: {symptoms}")
 

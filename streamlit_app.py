@@ -70,17 +70,17 @@ def sugerir_sintomas(symptoms, available_symptoms):
         symptom_lower = symptom.lower()
         st.markdown(f" sintoma {symptom}")
         symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como lista
-        if symptom_lower[0] in available_symptoms_lower:
-            st.session_state["symptoms_corrected"][symptom_lower[0]] = available_symptoms_lower[symptom_lower[0]]
-        elif symptom_lower[0] in st.session_state["symptoms_corrected"]:
+        if symptom_lower in available_symptoms_lower:
+            st.session_state["symptoms_corrected"][symptom_lower] = available_symptoms_lower[symptom_lower]
+        elif symptom_lower in st.session_state["symptoms_corrected"]:
             continue  
         else:
-            closest_matches = difflib.get_close_matches(symptom_lower[0], available_symptoms_lower.keys(), n=3, cutoff=0.4)
+            closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
             if closest_matches:
-                pending[symptom_lower[0]] = closest_matches
+                pending[symptom_lower] = closest_matches
             else:
                 st.warning(f"El síntoma '{symptom}' no está registrado y no se encontraron coincidencias.")
-                st.session_state["symptoms_corrected"][symptom_lower[0]] = symptom  
+                st.session_state["symptoms_corrected"][symptom_lower] = symptom  
 
     if pending:
         st.session_state["pending_corrections"] = pending

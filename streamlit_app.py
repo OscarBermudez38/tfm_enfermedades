@@ -100,9 +100,11 @@ def predict_diseases(symptom_input):
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]
-
+    st.markdown(f"Antes de vector {symptom_input}")
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
     symptom_vector = symptom_vector[:, :model.input_shape[1]]
+    st.markdown(f"despues de vector {symptom_input}")
+
 
     if symptom_vector.sum() == 0:
         return []

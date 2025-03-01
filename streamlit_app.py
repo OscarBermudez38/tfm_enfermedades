@@ -80,6 +80,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         symptom_lower = symptom.lower()
+        st.markdown(f" sintoma {symptom}")
         symptom_lower = corregir_sintomas([symptom])  # Corregir el síntoma actual
 
         if symptom_lower[0] in available_symptoms_lower:

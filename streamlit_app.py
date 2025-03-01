@@ -69,7 +69,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     for symptom in symptoms:
         st.markdown(f" sintoma {symptom}")
-        symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
+        #symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
         symptom_lower = symptom_lower.lower()
         st.markdown(f"minuscula:{symptom_lower}")
 

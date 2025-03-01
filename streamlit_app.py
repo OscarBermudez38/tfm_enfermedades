@@ -103,9 +103,13 @@ def predict_diseases(symptom_input):
     model = st.session_state["model"]
 
     for symptom in symptom_input:
-        
-        if symptom in X.columns:
-            st.markdown(f"{symptom} - columnas {X.columns[symptpm]}")
+    # Buscar la columna que coincide exactamente con el síntoma
+        matching_column = next((col for col in X.columns if col == symptom), None)
+    
+    if matching_column:
+        st.markdown(f"✅ El síntoma '{symptom}' coincide con la columna: **'{matching_column}'**")
+    else:
+        st.markdown(f"❌ El síntoma '{symptom}' NO coincide con ninguna columna del dataset.")
 
     symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
     symptom_vector = symptom_vector[:, :model.input_shape[1]]

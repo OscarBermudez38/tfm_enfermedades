@@ -90,6 +90,10 @@ def sugerir_sintomas(symptoms, available_symptoms):
 # Función para predecir enfermedades
 def predict_diseases(symptom_input):
     df_treatments = st.session_state["df_treatments"]
+    if isinstance(symptom_input, list) and len(symptom_input) > 1:
+    # Si hay más de un síntoma, convierte cada uno a minúsculas
+        symptom_input = [symptom.lower() for symptom in symptom_input]
+
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]

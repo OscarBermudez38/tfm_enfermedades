@@ -180,7 +180,7 @@ if st.session_state["pending_corrections"]:
         corrected_symptoms = list(st.session_state["symptoms_corrected"].values())
         st.markdown(f"sintomas correfidos {corrected_symptoms}")
         st.session_state["disease_predictions"] = predict_diseases(corrected_symptoms)
-        st.rerun()
+        #st.rerun()
 
 # Si no hay correcciones pendientes, analizar directamente
 elif st.button("Analizar síntomas", key="predict_button"):

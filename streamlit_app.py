@@ -55,10 +55,10 @@ def traducir_texto(texto, src="es", dest="en"):
     try:
         # Traducción síncrona
         translated = translator.translate(texto, src=src, dest=dest)
-        print(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
+        st.markdown(f"📝 Traducido '{texto}' -> '{translated.text}'")  # Muestra la traducción
         return translated.text  # Accede al texto traducido
     except Exception as e:
-        print(f"⚠️ Error al traducir: {e}")
+        st.markdown(f"⚠️ Error al traducir: {e}")
         return texto  # Si hay error, retorna el texto original
 
 def traducir_sintomas(symptoms):
@@ -171,7 +171,7 @@ if st.session_state["pending_corrections"]:
     st.subheader("Confirma los síntomas corregidos antes de continuar")
     for symptom, options in st.session_state["pending_corrections"].items():
         selected_option = st.radio(
-            f"¿'{symptom}' no es un síntoma registrado, te referías a...?",
+            f"¿'{traducir_texto(symptom)}' no es un síntoma registrado, te referías a...?",
             options + ["Ninguna de las anteriores"],
             index=0,
             key=f"radio_{symptom}"

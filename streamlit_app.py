@@ -91,7 +91,7 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     if pending:
         st.session_state["pending_corrections"] = pending
-        st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
+        #st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
     return all_simptoms
 
 # Función para predecir enfermedades
@@ -197,7 +197,7 @@ elif st.button("Analizar síntomas", key="predict_button"):
 
     if not st.session_state["pending_corrections"]:
         st.session_state["disease_predictions"] = predict_diseases(symptoms_sugeridos)
-        st.rerun()
+        #st.rerun()
 
 # Mostrar resultados si ya se generaron
 if st.session_state["disease_predictions"]:

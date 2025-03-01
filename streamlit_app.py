@@ -63,22 +63,14 @@ def traducir_texto(texto, src="es", dest="en"):
 def sugerir_sintomas(symptoms, available_symptoms):
     available_symptoms_lower = {s.lower(): s for s in available_symptoms}
     pending = {}
-    all_simptoms = []
 
     for symptom in symptoms:
-        st.markdown(f" sintoma {symptom}")
-        symptom_lower = traducir_texto(symptom)  # Pasar el síntoma como cadena, no como listast.write(f"Término traducido: {symptom_lower}")  # Depuración
-        symptom_lower = symptom_lower.lower()
-        st.markdown(f"minuscula:{symptom_lower}")
+        symptom_lower = symptom.lower()
 
-        if symptom_lower in available_symptoms_lower:        
+        if symptom_lower in available_symptoms_lower:
             st.session_state["symptoms_corrected"][symptom_lower] = available_symptoms_lower[symptom_lower]
-            all_simptoms.append(symptom_lower)
-
         elif symptom_lower in st.session_state["symptoms_corrected"]:
-
             continue  
-
         else:
             closest_matches = difflib.get_close_matches(symptom_lower, available_symptoms_lower.keys(), n=3, cutoff=0.4)
             if closest_matches:
@@ -89,8 +81,8 @@ def sugerir_sintomas(symptoms, available_symptoms):
 
     if pending:
         st.session_state["pending_corrections"] = pending
-        #st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
-    return all_simptoms
+        st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
+
 # Función para predecir enfermedades
 def predict_diseases(symptom_input):
     df_treatments = st.session_state["df_treatments"]

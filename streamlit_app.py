@@ -94,35 +94,62 @@ def sugerir_sintomas(symptoms, available_symptoms):
         #st.rerun()  # 🔥 Recargar la interfaz inmediatamente para mostrar las sugerencias
     return all_simptoms
 
-# Función para predecir enfermedades
+
 def predict_diseases(symptom_input):
+    """
+    Función para predecir enfermedades basadas en los síntomas ingresados.
+    
+    Args:
+        symptom_input (list): Lista de síntomas ingresados por el usuario.
+    
+    Returns:
+        list: Lista de tuplas con las enfermedades predichas, su probabilidad y tratamientos.
+    """
+    # Obtener los datos necesarios del session_state
     df_treatments = st.session_state["df_treatments"]
-    symptom_input = [symptom.lower() for symptom in symptom_input]
     X = st.session_state["X"]
     mlb = st.session_state["mlb"]
     model = st.session_state["model"]
 
-    X.columns = [col.lower() for col in X.columns]
+    # Normalizar los síntomas ingresados (minúsculas y sin espacios adicionales)
+    symptom_input = [symptom.strip().lower() for symptom in symptom_input]
 
-    symptom_vector = np.array([[1 if symptom in symptom_input else 0 for symptom in X.columns]])
-    symptom_vector = symptom_vector[:, :model.input_shape[1]]
+    # Normalizar las columnas de X (minúsculas y sin espacios adicionales)
+    X.columns = [col.strip().lower() for col in X.columns]
 
-    if symptom_vector.sum() == 0:
-        return []
+    # Depuración: Verificar síntomas y columnas
+    st.write("Síntomas en symptom_input:", symptom_input)
+    st.write("Columnas de X:", X.columns)
 
-    # Obtener los nombres de las columnas donde hay un 1
+    # Crear el symptom_vector
+    symptom_vector = np.array([[1 if symptom in X.columns else 0 for symptom in symptom_input]])
+
+    # Depuración: Verificar el symptom_vector
+    st.write("Symptom vector:", symptom_vector)
+
+    # Obtener las columnas con valor 1
     columnas_con_uno = [col for col, val in zip(X.columns, symptom_vector[0]) if val == 1]
-
-    # Mostrar las columnas con un 1
     st.markdown(f"Columnas con valor 1: {', '.join(columnas_con_uno)}")
 
+    # Si no hay síntomas válidos, retornar una lista vacía
+    if symptom_vector.sum() == 0:
+        st.warning("No se encontraron síntomas válidos en el modelo.")
+        return []
+
+    # Asegurarse de que el symptom_vector tenga la forma correcta para el modelo
+    symptom_vector = symptom_vector[:, :model.input_shape[1]]
+
+    # Predecir las probabilidades de las enfermedades
     probabilities = model.predict(symptom_vector)[0]
     disease_probabilities = {mlb.classes_[i]: prob for i, prob in enumerate(probabilities)}
+
+    # Ordenar las enfermedades por probabilidad (de mayor a menor)
     sorted_diseases = sorted(disease_probabilities.items(), key=lambda x: x[1], reverse=True)
 
+    # Filtrar enfermedades con probabilidad mayor o igual al 1% y obtener tratamientos
     results = []
     for disease, prob in sorted_diseases:
-        if prob >= 0.01:
+        if prob >= 0.01:  # Solo considerar enfermedades con probabilidad >= 1%
             treatment_row = df_treatments[df_treatments["name"] == disease]
             if not treatment_row.empty:
                 treatment_columns = [col for col in df_treatments.columns[3:] if "Unnamed" not in col]
@@ -131,8 +158,8 @@ def predict_diseases(symptom_input):
             else:
                 treatments = ["No hay tratamientos disponibles"]
             results.append((disease, prob, treatments))
-    return results
 
+    return results
 # Función para interactuar con ChatGPT
 def chat_with_gpt(disease_predictions):
     if not disease_predictions:
